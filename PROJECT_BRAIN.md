@@ -8,15 +8,16 @@
 
 ## Status Snapshot
 
-- **Phase:** PR 2 hero and CTA closer implemented; ready for review.
+- **Phase:** PR 3 bento masonry implemented; ready for review.
 - **Last touched:** 2026-05-20.
-- **Next action:** Review PR 2, then start PR 3 (`BentoMasonry` + parallax island) per [DESIGN.md Section 11 Phase 2](DESIGN.md).
-- **Working tree:** Homepage now composes real `Hero` and `CtaCloser` sections using content from `src/content/home.ts`.
+- **Next action:** Review PR 3, then start PR 4 (`CoursesTabbed` scroll-spy section) per [DESIGN.md Section 11 Phase 2](DESIGN.md).
+- **Working tree:** Homepage now composes `Hero`, `BentoMasonry`, and `CtaCloser` sections using content from `src/content/home.ts`.
 
 ---
 
 ## What's Done
 
+- **2026-05-20** - PR 3 bento masonry added: proof section after the hero, real client logo assets, verified-only "Since 2011" proof, HRD/ISO positioning cards, reduced-motion-aware parallax script, and static fallback layout.
 - **2026-05-20** - PR 2 hero and CTA closer added: real homepage hero component, compact CTA closer, homepage content module, WhatsApp-first CTA wiring, and shared contact details in `src/content/site.ts`.
 - **2026-05-20** - PR 1 foundation added: Astro config, package scripts, Tailwind/PostCSS setup, design tokens, global styles, `BaseLayout`, `Nav`, `Footer`, primitives (`Button`, `Card`, `SectionHeading`, `TabBar`, `LogoWall`), favicon, and temporary smoke homepage.
 - **2026-05-20** - Asset library folders added under `assets/` for source originals and web-ready exports.
@@ -31,13 +32,13 @@ _Nothing._
 
 ---
 
-## Next Up - PR 3: Bento Masonry
+## Next Up - PR 4: CoursesTabbed
 
 Per [DESIGN.md Section 11 Phase 2](DESIGN.md):
 
-> `BentoMasonry` + parallax island. Static masonry first, then layer parallax.
+> `CoursesTabbed` + tab island. No-JS stacked fallback first, then sliding indicator + crossfade.
 
-PR 3 should add the trust/proof wall after the hero and before later category sections. Start static and use available assets from `assets/source/logos/clients/` plus verified-only proof.
+Note: the consolidated spec later changed `CoursesTabbed` into a scroll-spy section. Follow [DESIGN.md Section 5.2](DESIGN.md): sticky labels on desktop, stacked cards on mobile, no-JS fallback, reduced-motion instant state changes.
 
 ---
 
@@ -49,7 +50,7 @@ Full list lives in [DESIGN.md Section 13](DESIGN.md). Status snapshot here:
 |---|---|---|---|
 | 1 | Tech stack confirmation | PR 1 | CLOSED - Astro + Tailwind selected for PR 1 |
 | 2 | Logo SVG | PR 1 | PARTIAL - text/IL wordmark placeholder used until real logo lands in `assets/source/brand/logo/` |
-| 3 | Bento assets, at least 8 strong photos | PR 3 | OPEN |
+| 3 | Bento assets, at least 8 strong photos | PR 3 | PARTIAL - client logos available; workshop photos still missing |
 | 4 | Course images per category | PR 4 | OPEN |
 | 5 | HRD claimable per-course list | PR 9, PR 13 | OPEN |
 | 6 | Primary inquiry destination: WhatsApp, email, or form | PR 2, PR 16 | CLOSED - WhatsApp first for homepage CTA; email secondary |
@@ -68,6 +69,14 @@ Full list lives in [DESIGN.md Section 13](DESIGN.md). Status snapshot here:
 ---
 
 ## Decisions Log
+
+### 2026-05-20 - PR 3 bento uses logos before photos
+
+Workshop/photo assets are not available yet, so the bento uses real client logos plus verified proof and positioning cards. Photo cards can replace some proof/logo cards when approved workshop imagery lands.
+
+### 2026-05-20 - Bento parallax is progressive enhancement
+
+`BentoMasonry.client.ts` only adjusts a CSS variable while the section is visible and exits under `prefers-reduced-motion`. The static masonry remains fully rendered without JavaScript.
 
 ### 2026-05-20 - WhatsApp-first homepage CTA
 
@@ -99,6 +108,8 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 
 - `npm run build` passes with Astro check and static build.
 - Production dependency audit is clean via `npm audit --omit=dev --audit-level=moderate`.
+- PR 3 imports logo images directly from `assets/source/logos/clients/`; Astro fingerprints them into `dist/_astro`.
+- There are no workshop photos in `assets/source/photos/` yet, so bento media cards are intentionally deferred.
 - Full `npm audit` still reports moderate advisories in dev-only `@astrojs/check` / language-server dependencies. Keep watching for an upstream fix.
 - `npm run dev` currently fails in this sandboxed Windows environment with a Vite/esbuild dependency-optimization access error (`Cannot read directory "../../..": Access is denied`). The production build is unaffected.
 - The in-app Browser plugin is installed, but this session did not expose its required Node REPL tool, so visual browser automation could not be completed here.

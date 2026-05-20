@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BentoMasonry from "../components/sections/BentoMasonry.astro";
 import CtaCloser from "../components/sections/CtaCloser.astro";
 import Hero from "../components/sections/Hero.astro";
-import { ctaCloser, homeHero } from "../content/home";
+import { ctaCloser, homeHero, proofBento } from "../content/home";
 ---
 
 <BaseLayout>
   <Hero {...homeHero} />
+  <BentoMasonry {...proofBento} />
   <CtaCloser {...ctaCloser} />
 </BaseLayout>

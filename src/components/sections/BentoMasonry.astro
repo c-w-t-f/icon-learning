@@ -1,0 +1,139 @@
+---
+type ImageLike = string | { src: string; width?: number; height?: number };
+
+interface Logo {
+  name: string;
+  src: ImageLike;
+}
+
+interface BentoItem {
+  type: "proof" | "feature" | "quote" | "logoCloud";
+  column: number;
+  speed?: number;
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  quote?: string;
+  attribution?: string;
+  logos?: readonly Logo[];
+}
+
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  description?: string;
+  items: readonly BentoItem[];
+}
+
+const { eyebrow, heading, description, items } = Astro.props;
+const columns = [1, 2, 3].map((column) => items.filter((item) => item.column === column));
+const imageSrc = (image: ImageLike) => (typeof image === "string" ? image : image.src);
+---
+
+<section id="proof" class="section-pad overflow-hidden bg-[var(--color-bg)]" data-bento-masonry>
+  <div class="container-wide">
+    <div class="mx-auto max-w-3xl text-center">
+      {eyebrow && <p class="eyebrow justify-center">{eyebrow}</p>}
+      <h2 class="display-lg mt-4 text-balance">{heading}</h2>
+      {description && <p class="body-lg mx-auto mt-5 max-w-2xl text-[var(--color-ink-muted)]">{description}</p>}
+    </div>
+
+    <div class="bento-grid mt-12 grid gap-4 lg:grid-cols-3 lg:items-start">
+      {
+        columns.map((column, columnIndex) => (
+          <div class:list={["bento-column flex flex-col gap-4", columnIndex === 1 && "lg:pt-12", columnIndex === 2 && "lg:pt-6"]}>
+            {column.map((item) => (
+              <article class:list={["bento-card", `bento-card--${item.type}`]} data-bento-card data-speed={item.speed ?? 0}>
+                {item.type === "quote" ? (
+                  <>
+                    <p class="bento-quote">"{item.quote}"</p>
+                    {item.attribution && <p class="body-sm mt-6 text-[var(--color-ink-muted)]">{item.attribution}</p>}
+                  </>
+                ) : item.type === "logoCloud" ? (
+                  <>
+                    {item.eyebrow && <p class="eyebrow">{item.eyebrow}</p>}
+                    {item.heading && <h3 class="display-md mt-4">{item.heading}</h3>}
+                    <ul class="mt-6 grid grid-cols-2 gap-x-6 gap-y-5" aria-label={item.heading}>
+                      {item.logos?.map((logo) => (
+                        <li class="flex min-h-12 items-center justify-center">
+                          <img class="max-h-9 w-auto max-w-28 opacity-75 grayscale transition duration-200 hover:opacity-100 hover:grayscale-0" src={imageSrc(logo.src)} alt={logo.name} loading="lazy" />
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <>
+                    {item.eyebrow && <p class="eyebrow">{item.eyebrow}</p>}
+                    {item.heading && <h3 class="display-md mt-4">{item.heading}</h3>}
+                    {item.body && <p class="body-copy mt-4 text-[var(--color-ink-muted)]">{item.body}</p>}
+                  </>
+                )}
+              </article>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import "./BentoMasonry.client";
+</script>
+
+<style>
+  .bento-card {
+    --bento-y: 0px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 28px;
+    box-shadow: var(--shadow-sm);
+    min-height: 18rem;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    transform: translate3d(0, var(--bento-y), 0);
+    transition:
+      box-shadow 250ms var(--ease-standard),
+      transform 250ms var(--ease-standard);
+  }
+
+  .bento-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translate3d(0, calc(var(--bento-y) - 4px), 0) scale(1.01);
+  }
+
+  .bento-card--feature,
+  .bento-card--proof {
+    min-height: 22rem;
+  }
+
+  .bento-card--quote {
+    background: var(--color-ink);
+    color: var(--color-ink-inverse);
+    min-height: 17rem;
+  }
+
+  .bento-card--quote .body-sm {
+    color: color-mix(in srgb, var(--color-ink-inverse), transparent 28%);
+  }
+
+  .bento-quote {
+    font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.18;
+  }
+
+  @media (max-width: 1023px) {
+    .bento-card,
+    .bento-card:hover {
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bento-card,
+    .bento-card:hover {
+      transform: none;
+    }
+  }
+</style>
