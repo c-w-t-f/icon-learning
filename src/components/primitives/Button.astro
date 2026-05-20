@@ -1,0 +1,53 @@
+---
+type Variant = "filled-ink" | "filled-accent" | "outline" | "ghost";
+type Size = "md" | "lg";
+
+interface Props {
+  href?: string;
+  variant?: Variant;
+  size?: Size;
+  class?: string;
+  type?: "button" | "submit" | "reset";
+}
+
+const {
+  href,
+  variant = "filled-ink",
+  size = "md",
+  class: className,
+  type = "button",
+} = Astro.props;
+
+const base =
+  "inline-flex items-center justify-center rounded-full font-semibold transition-[background,border-color,box-shadow,color,transform] duration-200 ease-[var(--ease-standard)] focus-visible:outline-none";
+
+const variants = {
+  "filled-ink":
+    "bg-[var(--color-ink)] text-[var(--color-ink-inverse)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]",
+  "filled-accent":
+    "bg-[var(--color-accent)] text-white hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]",
+  outline:
+    "border border-[var(--color-border-strong)] bg-transparent text-[var(--color-ink)] hover:-translate-y-0.5 hover:border-[var(--color-ink)] hover:shadow-[var(--shadow-sm)]",
+  ghost:
+    "text-[var(--color-ink)] hover:text-[var(--color-accent)]",
+};
+
+const sizes = {
+  md: "min-h-11 px-5 py-2.5 text-sm",
+  lg: "min-h-12 px-7 py-3 text-base",
+};
+
+const classes = [base, variants[variant], sizes[size], className].filter(Boolean).join(" ");
+---
+
+{
+  href ? (
+    <a class={classes} href={href}>
+      <slot />
+    </a>
+  ) : (
+    <button class={classes} type={type}>
+      <slot />
+    </button>
+  )
+}

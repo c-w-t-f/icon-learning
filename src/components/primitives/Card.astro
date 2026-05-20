@@ -1,0 +1,36 @@
+---
+type Variant = "flat" | "raised" | "media" | "proof" | "program";
+
+interface Props {
+  href?: string;
+  variant?: Variant;
+  class?: string;
+}
+
+const { href, variant = "raised", class: className } = Astro.props;
+
+const base =
+  "block rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] transition-[border-color,box-shadow,transform] duration-200 ease-[var(--ease-standard)]";
+
+const variants = {
+  flat: "shadow-none",
+  raised: "shadow-[var(--shadow-sm)] hover:-translate-y-1 hover:shadow-[var(--shadow-md)]",
+  media: "overflow-hidden shadow-[var(--shadow-sm)] hover:-translate-y-1 hover:shadow-[var(--shadow-md)]",
+  proof: "p-6 shadow-[var(--shadow-sm)]",
+  program: "p-5 shadow-[var(--shadow-sm)] hover:-translate-y-1 hover:shadow-[var(--shadow-md)]",
+};
+
+const classes = [base, variants[variant], className].filter(Boolean).join(" ");
+---
+
+{
+  href ? (
+    <a class={classes} href={href}>
+      <slot />
+    </a>
+  ) : (
+    <div class={classes}>
+      <slot />
+    </div>
+  )
+}

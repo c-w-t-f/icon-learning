@@ -1,0 +1,74 @@
+---
+import Button from "../primitives/Button.astro";
+import { navigationItems } from "../../content/navigation";
+import { site } from "../../content/site";
+---
+
+<div id="nav-sentinel" class="absolute top-0 h-px w-px" aria-hidden="true"></div>
+<header
+  id="site-nav"
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background,border-color,backdrop-filter] duration-200 ease-[var(--ease-standard)]"
+>
+  <nav class="container-wide flex h-[var(--nav-height)] items-center justify-between gap-6" aria-label="Primary navigation">
+    <a class="flex items-center gap-3 font-bold tracking-normal" href="/" aria-label={`${site.name} home`}>
+      <span class="grid h-9 w-9 place-items-center rounded-full bg-[var(--color-ink)] text-sm text-[var(--color-ink-inverse)]">IL</span>
+      <span>{site.name}</span>
+    </a>
+
+    <div class="hidden items-center gap-8 lg:flex">
+      {
+        navigationItems.map((item) => (
+          <a class="body-sm relative text-[var(--color-ink-muted)] transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-[var(--color-ink)] after:transition-[width] after:duration-200 hover:text-[var(--color-ink)] hover:after:w-full" href={item.href}>
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="hidden lg:block">
+      <Button href="/contact" variant="filled-ink">Request training</Button>
+    </div>
+
+    <details class="group relative lg:hidden">
+      <summary class="grid h-11 w-11 cursor-pointer list-none place-items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-ink)] marker:hidden" aria-label="Open menu">
+        <span class="flex w-5 flex-col gap-1.5">
+          <span class="h-0.5 rounded-full bg-current"></span>
+          <span class="h-0.5 rounded-full bg-current"></span>
+        </span>
+      </summary>
+      <div class="absolute right-0 top-14 w-[min(20rem,calc(100vw-2rem))] rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-[var(--shadow-md)]">
+        <div class="flex flex-col gap-1">
+          {
+            navigationItems.map((item) => (
+              <a class="rounded-xl px-3 py-3 text-sm font-medium text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]" href={item.href}>
+                {item.label}
+              </a>
+            ))
+          }
+        </div>
+        <Button class="mt-4 w-full" href="/contact" variant="filled-ink">Request training</Button>
+      </div>
+    </details>
+  </nav>
+</header>
+
+<script>
+  const nav = document.querySelector("#site-nav");
+  const sentinel = document.querySelector("#nav-sentinel");
+
+  if (nav && sentinel) {
+    const observer = new IntersectionObserver(([entry]) => {
+      nav.toggleAttribute("data-scrolled", !entry.isIntersecting);
+    });
+
+    observer.observe(sentinel);
+  }
+</script>
+
+<style>
+  #site-nav[data-scrolled] {
+    background: rgb(251 250 248 / 0.82);
+    backdrop-filter: blur(12px);
+    border-color: var(--color-border);
+  }
+</style>

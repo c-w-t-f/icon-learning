@@ -1,0 +1,38 @@
+---
+interface Tab {
+  label: string;
+  href?: string;
+  active?: boolean;
+}
+
+interface Props {
+  tabs: Tab[];
+  label?: string;
+}
+
+const { tabs, label = "Section tabs" } = Astro.props;
+const activeIndex = Math.max(0, tabs.findIndex((tab) => tab.active));
+---
+
+<div class="overflow-x-auto" role="tablist" aria-label={label}>
+  <div class="relative inline-grid min-w-max rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] p-1 shadow-[var(--shadow-sm)]" style={`grid-template-columns: repeat(${tabs.length}, minmax(0, 1fr));`}>
+    <span
+      class="absolute bottom-1 top-1 rounded-full bg-[var(--color-accent-soft)] transition-transform duration-300 ease-[var(--ease-standard)]"
+      style={`left: 0.25rem; width: calc((100% - 0.5rem) / ${tabs.length}); transform: translateX(calc(${activeIndex} * 100%));`}
+      aria-hidden="true"
+    >
+    </span>
+    {
+      tabs.map((tab) => (
+        <a
+          class="body-sm relative z-10 rounded-full px-4 py-2 font-medium text-[var(--color-ink-muted)] transition-colors hover:text-[var(--color-ink)] aria-selected:text-[var(--color-ink)]"
+          href={tab.href ?? "#"}
+          role="tab"
+          aria-selected={tab.active ? "true" : "false"}
+        >
+          {tab.label}
+        </a>
+      ))
+    }
+  </div>
+</div>

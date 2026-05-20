@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/primitives/Button.astro";
+import Card from "../components/primitives/Card.astro";
+import LogoWall from "../components/primitives/LogoWall.astro";
+import SectionHeading from "../components/primitives/SectionHeading.astro";
+import TabBar from "../components/primitives/TabBar.astro";
+---
+
+<BaseLayout>
+  <section id="hero" class="container-page flex min-h-[72vh] flex-col items-center justify-center gap-7 pt-[var(--nav-height)] text-center">
+    <p class="eyebrow">HRD Corp claimable training provider</p>
+    <h1 class="display-xl max-w-4xl">Corporate training that moves work forward</h1>
+    <p class="body-lg max-w-2xl text-[var(--color-ink-muted)]">
+      Icon Learning helps Malaysian teams build practical skills through HRD-claimable programs, ISO consultancy, and customized in-house training.
+    </p>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <Button href="/contact" size="lg">Request training</Button>
+      <Button href="/programs" variant="outline" size="lg">View programs</Button>
+    </div>
+  </section>
+
+  <section id="foundation-preview" class="section-pad bg-[var(--color-surface-muted)]">
+    <div class="container-page">
+      <SectionHeading
+        eyebrow="Foundation"
+        heading="The first layer is ready for real content"
+        description="This temporary page exercises the shared layout, navigation, footer, buttons, cards, tabs, and logo wall before the homepage sections are built."
+      />
+
+      <div class="mt-10">
+        <TabBar
+          tabs={[
+            { label: "Training", href: "#training", active: true },
+            { label: "Consultancy", href: "#consultancy" },
+            { label: "Delivery", href: "#delivery" },
+          ]}
+        />
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <Card variant="program">
+          <p class="eyebrow">Programs</p>
+          <h2 id="training" class="display-md mt-4">Corporate training</h2>
+          <p class="body-copy mt-3 text-[var(--color-ink-muted)]">A reusable card primitive for program previews and future catalog entries.</p>
+        </Card>
+        <Card variant="proof">
+          <p class="eyebrow">Proof</p>
+          <h2 id="consultancy" class="display-md mt-4">ISO support</h2>
+          <p class="body-copy mt-3 text-[var(--color-ink-muted)]">A calm proof surface for verified claims, credentials, and short testimonials.</p>
+        </Card>
+        <Card variant="program">
+          <p class="eyebrow">Delivery</p>
+          <h2 id="delivery" class="display-md mt-4">In-house learning</h2>
+          <p class="body-copy mt-3 text-[var(--color-ink-muted)]">The foundation uses restrained motion and black primary CTAs per the design spec.</p>
+        </Card>
+      </div>
+
+      <div class="mt-10">
+        <LogoWall logos={[{ name: "Client logo" }, { name: "Client logo" }, { name: "Client logo" }, { name: "Client logo" }, { name: "Client logo" }, { name: "Client logo" }]} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

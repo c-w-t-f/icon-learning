@@ -1,2 +1,9 @@
 course
 archive
+node_modules
+dist
+.astro
+.env
+.env.*
+npm-debug.log*
+*.log

@@ -1,0 +1,26 @@
+---
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  description?: string;
+  align?: "left" | "center";
+  size?: "lg" | "xl";
+}
+
+const {
+  eyebrow,
+  heading,
+  description,
+  align = "left",
+  size = "lg",
+} = Astro.props;
+
+const alignment = align === "center" ? "mx-auto text-center items-center" : "items-start";
+const headingSize = size === "xl" ? "display-xl" : "display-lg";
+---
+
+<div class:list={["flex max-w-3xl flex-col gap-4", alignment]}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2 class={headingSize}>{heading}</h2>
+  {description && <p class="body-lg max-w-2xl text-[var(--color-ink-muted)]">{description}</p>}
+</div>

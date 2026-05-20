@@ -1,0 +1,36 @@
+export const navigationItems = [
+  { label: "Programs", href: "/programs" },
+  { label: "Solutions", href: "/#services" },
+  { label: "About", href: "/about-us" },
+  { label: "Clients", href: "/clients" },
+  { label: "Contact", href: "/contact" },
+];
+
+export const footerGroups = [
+  {
+    title: "Explore",
+    links: [
+      { label: "Programs", href: "/programs" },
+      { label: "About us", href: "/about-us" },
+      { label: "Clients", href: "/clients" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Programs",
+    links: [
+      { label: "Leadership & coaching", href: "/programs/leadership-management-coaching" },
+      { label: "Quality & food safety", href: "/programs/quality-lean-food-safety" },
+      { label: "Safety & health", href: "/programs/safety-health-environment" },
+      { label: "Digital skills", href: "/programs/microsoft-ai-digital-skills" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "Accessibility", href: "/accessibility-statement" },
+      { label: "Email inquiry", href: "mailto:info@iconlearning.com.my" },
+      { label: "WhatsApp", href: "https://wa.me/" },
+    ],
+  },
+];

@@ -1,0 +1,34 @@
+---
+interface Logo {
+  name: string;
+  src?: string;
+  href?: string;
+}
+
+interface Props {
+  logos: Logo[];
+  class?: string;
+}
+
+const { logos, class: className } = Astro.props;
+---
+
+<ul class:list={["grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6", className]} aria-label="Client logos">
+  {
+    logos.map((logo) => (
+      <li class="flex min-h-24 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-5 text-center text-sm font-semibold text-[var(--color-ink-muted)]">
+        {logo.src ? (
+          logo.href ? (
+            <a href={logo.href} aria-label={logo.name}>
+              <img src={logo.src} alt={logo.name} loading="lazy" />
+            </a>
+          ) : (
+            <img src={logo.src} alt={logo.name} loading="lazy" />
+          )
+        ) : (
+          <span>{logo.name}</span>
+        )}
+      </li>
+    ))
+  }
+</ul>

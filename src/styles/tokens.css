@@ -1,0 +1,23 @@
+:root {
+  --color-bg: #fbfaf8;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f0eb;
+  --color-ink: #0a0a0a;
+  --color-ink-muted: #666666;
+  --color-ink-dim: #9a9a9a;
+  --color-ink-inverse: #fbfaf8;
+  --color-border: #e8e5de;
+  --color-border-strong: #d8d4ca;
+  --color-accent: #7c3aed;
+  --color-accent-soft: #f1ecff;
+  --color-success-soft: #e9f8ef;
+  --color-warning-soft: #fff3d8;
+  --shadow-sm: 0 1px 2px rgb(10 10 10 / 0.04);
+  --shadow-md: 0 8px 24px rgb(10 10 10 / 0.08);
+  --nav-height: 4.5rem;
+  --page-gutter: clamp(1rem, 4vw, 4rem);
+  --page-max: 80rem;
+  --wide-max: 90rem;
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
