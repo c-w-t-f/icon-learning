@@ -1,3 +1,5 @@
+import { site } from "./site";
+
 export const navigationItems = [
   { label: "Programs", href: "/programs" },
   { label: "Solutions", href: "/#services" },
@@ -29,8 +31,8 @@ export const footerGroups = [
     title: "Company",
     links: [
       { label: "Accessibility", href: "/accessibility-statement" },
-      { label: "Email inquiry", href: "mailto:info@iconlearning.com.my" },
-      { label: "WhatsApp", href: "https://wa.me/" },
+      { label: "Email inquiry", href: site.emailHref },
+      { label: "WhatsApp", href: site.whatsappHref },
     ],
   },
 ];

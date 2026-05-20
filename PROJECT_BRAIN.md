@@ -8,15 +8,16 @@
 
 ## Status Snapshot
 
-- **Phase:** PR 1 foundation implemented; ready for review.
+- **Phase:** PR 2 hero and CTA closer implemented; ready for review.
 - **Last touched:** 2026-05-20.
-- **Next action:** Review PR 1, then start PR 2 (`Hero` + `CtaCloser`) per [DESIGN.md Section 11 Phase 2](DESIGN.md).
-- **Working tree:** Astro project scaffold exists with Tailwind, tokens, layout shell, nav/footer, primitives, and a temporary homepage smoke page.
+- **Next action:** Review PR 2, then start PR 3 (`BentoMasonry` + parallax island) per [DESIGN.md Section 11 Phase 2](DESIGN.md).
+- **Working tree:** Homepage now composes real `Hero` and `CtaCloser` sections using content from `src/content/home.ts`.
 
 ---
 
 ## What's Done
 
+- **2026-05-20** - PR 2 hero and CTA closer added: real homepage hero component, compact CTA closer, homepage content module, WhatsApp-first CTA wiring, and shared contact details in `src/content/site.ts`.
 - **2026-05-20** - PR 1 foundation added: Astro config, package scripts, Tailwind/PostCSS setup, design tokens, global styles, `BaseLayout`, `Nav`, `Footer`, primitives (`Button`, `Card`, `SectionHeading`, `TabBar`, `LogoWall`), favicon, and temporary smoke homepage.
 - **2026-05-20** - Asset library folders added under `assets/` for source originals and web-ready exports.
 - **2026-05-20** - Three competing design drafts (Claude, Gemini, Codex) reconciled into a single [DESIGN.md](DESIGN.md). Originals archived under `archive/`.
@@ -30,13 +31,13 @@ _Nothing._
 
 ---
 
-## Next Up - PR 2: Hero + CTA Closer
+## Next Up - PR 3: Bento Masonry
 
 Per [DESIGN.md Section 11 Phase 2](DESIGN.md):
 
-> `Hero` + `CtaCloser`. Confirms typography/colour on real surfaces.
+> `BentoMasonry` + parallax island. Static masonry first, then layer parallax.
 
-PR 2 should replace the temporary homepage smoke content with the first real homepage sections while reusing the PR 1 layout and primitives.
+PR 3 should add the trust/proof wall after the hero and before later category sections. Start static and use available assets from `assets/source/logos/clients/` plus verified-only proof.
 
 ---
 
@@ -51,7 +52,7 @@ Full list lives in [DESIGN.md Section 13](DESIGN.md). Status snapshot here:
 | 3 | Bento assets, at least 8 strong photos | PR 3 | OPEN |
 | 4 | Course images per category | PR 4 | OPEN |
 | 5 | HRD claimable per-course list | PR 9, PR 13 | OPEN |
-| 6 | Primary inquiry destination: WhatsApp, email, or form | PR 2, PR 16 | OPEN |
+| 6 | Primary inquiry destination: WhatsApp, email, or form | PR 2, PR 16 | CLOSED - WhatsApp first for homepage CTA; email secondary |
 | 7 | Testimonials approved for public use | PR 6 | OPEN |
 | 8 | Verified stats beyond "since 2011" | PR 6 | OPEN |
 | 9 | Domain / deploy target | PR 18 | OPEN |
@@ -67,6 +68,14 @@ Full list lives in [DESIGN.md Section 13](DESIGN.md). Status snapshot here:
 ---
 
 ## Decisions Log
+
+### 2026-05-20 - WhatsApp-first homepage CTA
+
+PR 2 uses WhatsApp as the primary CTA in `CtaCloser`, with email as secondary, matching [DESIGN.md Section 5.2](DESIGN.md). Shared contact details are centralized in `src/content/site.ts`.
+
+### 2026-05-20 - Hero and CTA content moved to `home.ts`
+
+Homepage copy now lives in `src/content/home.ts`, keeping the page composition thin and setting up the content-module pattern required by later homepage PRs.
 
 ### 2026-05-20 - Astro + Tailwind selected
 
@@ -108,6 +117,7 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 | `src/layouts/BaseLayout.astro` | Global HTML shell and metadata. | Yes |
 | `src/components/layout/` | `Nav` and `Footer`. | Yes |
 | `src/components/primitives/` | Shared PR 1 primitives. | Yes |
+| `src/components/sections/` | Homepage sections. | Yes |
 | `src/styles/tokens.css` | Design tokens. | Yes |
 | `src/styles/global.css` | Tailwind entry and global styles. | Yes |
 | `src/content/` | Site/navigation content. | Yes |

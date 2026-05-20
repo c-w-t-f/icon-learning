@@ -4,7 +4,9 @@ export const site = {
   description:
     "Icon Learning helps Malaysian teams build practical skills through HRD-claimable programs, ISO consultancy, and customized in-house training.",
   url: "https://www.iconlearning.com.my",
-  email: "info@iconlearning.com.my",
-  phone: "+60 00-000 0000",
-  address: "Sri Petaling, Kuala Lumpur, Malaysia",
+  email: "jane@iconlearning.com.my",
+  emailHref: "mailto:jane@iconlearning.com.my",
+  phone: "+6012-3245 938",
+  whatsappHref: "https://wa.me/60123245938",
+  address: "No 1, Jalan Radin 5, 57000 Sri Petaling, Kuala Lumpur",
 };
