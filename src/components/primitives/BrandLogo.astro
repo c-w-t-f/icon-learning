@@ -1,0 +1,18 @@
+---
+import logoVector from "../../../assets/source/brand/icons/icon-logo-vector.svg";
+import { site } from "../../content/site";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<img
+  class:list={["h-10 w-auto sm:h-11", className]}
+  src={logoVector.src}
+  width={logoVector.width}
+  height={logoVector.height}
+  alt={site.name}
+/>

@@ -1,5 +1,6 @@
 ---
 import Button from "../primitives/Button.astro";
+import BrandLogo from "../primitives/BrandLogo.astro";
 import { navigationItems } from "../../content/navigation";
 import { site } from "../../content/site";
 ---
@@ -10,9 +11,8 @@ import { site } from "../../content/site";
   class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background,border-color,backdrop-filter] duration-200 ease-[var(--ease-standard)]"
 >
   <nav class="container-wide flex h-[var(--nav-height)] items-center justify-between gap-6" aria-label="Primary navigation">
-    <a class="flex items-center gap-3 font-bold tracking-normal" href="/" aria-label={`${site.name} home`}>
-      <span class="grid h-9 w-9 place-items-center rounded-full bg-[var(--color-ink)] text-sm text-[var(--color-ink-inverse)]">IL</span>
-      <span>{site.name}</span>
+    <a class="flex shrink-0 items-center" href="/" aria-label={`${site.name} home`}>
+      <BrandLogo />
     </a>
 
     <div class="hidden items-center gap-8 lg:flex">
