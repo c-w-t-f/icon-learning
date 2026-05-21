@@ -1,0 +1,644 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Button from "../../../components/primitives/Button.astro";
+import ProgramCard from "../../../components/programs/ProgramCard.astro";
+import { courseUrl, courses, coursesByCategory } from "../../../content/courses";
+import { formatDuration, formatLanguage, programCategoryMap, type ProgramCategory } from "../../../content/programs";
+import { site } from "../../../content/site";
+import type { Course, CourseMethodologyMix, CourseModule } from "../../../content/courses/schema";
+
+export function getStaticPaths() {
+  return courses.map((course) => ({
+    params: {
+      category: course.categorySlug,
+      course: course.slug,
+    },
+    props: {
+      course,
+      category: programCategoryMap.get(course.categorySlug),
+    },
+  }));
+}
+
+interface Props {
+  course: Course;
+  category?: ProgramCategory;
+}
+
+const { course } = Astro.props;
+const category = Astro.props.category ?? programCategoryMap.get(course.categorySlug);
+const categoryTitle = category?.title ?? course.categorySlug;
+const title = `${course.title} - ${formatDuration(course.durationDays)} | Icon Learning`;
+const makeMetaDescription = (value: string) => {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  const firstSentence = normalized.match(/^.*?[.!?](?:\s|$)/)?.[0]?.trim() ?? normalized;
+  const clipped = firstSentence.length <= 154 ? firstSentence : firstSentence.slice(0, 152).replace(/\s+\S*$/, "");
+  return /[.!?]$/.test(clipped) ? clipped : `${clipped}.`;
+};
+const description = makeMetaDescription(course.whyThisMatters);
+const pageLang = course.language === "ms" ? "ms-MY" : "en-MY";
+const contactHref = `/contact?training=${encodeURIComponent(course.title)}`;
+const emailHref = `${site.emailHref}?subject=${encodeURIComponent(`Training outline: ${course.title}`)}`;
+const whatsappHref = `${site.whatsappHref}?text=${encodeURIComponent(`Hi Icon Learning, I would like the full outline for ${course.title}.`)}`;
+
+const methodologyLabels: Array<{ key: keyof CourseMethodologyMix; label: string }> = [
+  { key: "interactiveLectures", label: "Interactive" },
+  { key: "handsOnExercises", label: "Hands-on" },
+  { key: "groupActivities", label: "Group" },
+  { key: "demonstrations", label: "Demo" },
+  { key: "rolePlaying", label: "Role-play" },
+  { key: "selfAssessment", label: "Self-assessment" },
+];
+
+const methodologySegments = methodologyLabels
+  .map((item) => ({
+    ...item,
+    value: course.methodology?.[item.key] ?? 0,
+  }))
+  .filter((item) => item.value > 0);
+
+const moduleGroups = course.modules.reduce<Array<{ label: string; modules: CourseModule[] }>>((groups, module) => {
+  const label = module.day ? `Day ${module.day}` : "Workshop";
+  const group = groups.find((item) => item.label === label);
+
+  if (group) {
+    group.modules.push(module);
+  } else {
+    groups.push({ label, modules: [module] });
+  }
+
+  return groups;
+}, []);
+
+const relatedFromSlugs = (course.relatedSlugs ?? [])
+  .map((slug) => courses.find((item) => item.slug === slug))
+  .filter((item): item is Course => Boolean(item));
+const relatedSameCategory = (coursesByCategory[course.categorySlug] ?? []).filter((item) => item.slug !== course.slug);
+const relatedFromAdjacentCategories =
+  category?.relatedCategorySlugs.flatMap((slug) => coursesByCategory[slug] ?? []) ?? [];
+const relatedCourses = [...relatedFromSlugs, ...relatedSameCategory, ...relatedFromAdjacentCategories]
+  .filter((item, index, list) => item.slug !== course.slug && list.findIndex((candidate) => candidate.slug === item.slug) === index)
+  .slice(0, 3);
+
+const timeRequired = course.durationDays === 0.5 ? "PT4H" : `P${course.durationDays}D`;
+const inLanguage = course.language === "en+ms" ? ["en", "ms"] : course.language;
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Programs",
+        item: new URL("/programs", site.url).toString(),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: categoryTitle,
+        item: new URL(`/programs/${course.categorySlug}`, site.url).toString(),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: course.title,
+        item: new URL(courseUrl(course), site.url).toString(),
+      },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.whyThisMatters,
+    provider: {
+      "@type": "Organization",
+      name: site.name,
+      url: site.url,
+    },
+    ...(course.hrdClaimable ? { educationalCredentialAwarded: "HRD Corp Claimable Training" } : {}),
+    inLanguage,
+    timeRequired,
+    audience: course.builtFor.join(", "),
+    teaches: course.walkAwayWith,
+    coursePrerequisites: "No prerequisites",
+  },
+];
+---
+
+<BaseLayout title={title} description={description} lang={pageLang}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <section class="course-hero">
+    <div class="container-wide">
+      <div class="course-breadcrumb body-sm" data-reveal>
+        <a href="/programs">Programs</a>
+        <span aria-hidden="true">/</span>
+        <a href={`/programs/${course.categorySlug}`}>{category?.shortTitle ?? "Category"}</a>
+        <span aria-hidden="true">/</span>
+        <span>{course.title}</span>
+      </div>
+
+      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.65fr)_minmax(20rem,0.35fr)] lg:items-end">
+        <div>
+          <p class="eyebrow" data-reveal>{categoryTitle}</p>
+          <h1 class="display-xl mt-4 max-w-4xl text-balance" data-reveal>{course.title}</h1>
+          {course.subtitle && <p class="body-lg mt-5 max-w-3xl text-[var(--color-ink-muted)]" data-reveal>{course.subtitle}</p>}
+
+          <div class="course-badges mt-6" data-reveal>
+            {course.hrdClaimable && <span class="course-badge course-badge-claimable">HRD Corp claimable</span>}
+            <span class="course-badge">{formatDuration(course.durationDays)}</span>
+            <span class="course-badge">{formatLanguage(course.language)}</span>
+            {course.deliveryFormats.map((format) => <span class="course-badge">{format}</span>)}
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+            <Button href={contactHref} variant="filled-ink">Get the full outline</Button>
+            <Button href={whatsappHref} variant="outline">WhatsApp us</Button>
+          </div>
+        </div>
+
+        <div class="course-media" aria-hidden="true" data-reveal>
+          <div class="course-media-rule"></div>
+          <div>
+            <span>{formatDuration(course.durationDays)}</span>
+            <strong>{category?.shortTitle ?? "Training"}</strong>
+          </div>
+          <div class="course-media-footer">
+            <span>{formatLanguage(course.language)}</span>
+            <span>Icon Learning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad pt-0">
+    <div class="container-wide course-layout">
+      <div class="course-main">
+        <section class="course-section" aria-labelledby="why-heading" data-reveal>
+          <p class="eyebrow">Why this matters</p>
+          <h2 id="why-heading" class="display-md mt-4">The work problem this helps solve</h2>
+          <p class="body-lg mt-5 max-w-3xl text-[var(--color-ink-muted)]">{course.whyThisMatters}</p>
+        </section>
+
+        <section class="course-section" aria-labelledby="built-for-heading" data-reveal>
+          <p class="eyebrow">Built for</p>
+          <h2 id="built-for-heading" class="display-md mt-4">Teams who will get the most from it</h2>
+          <div class="course-pill-grid mt-6">
+            {course.builtFor.map((audience) => <span>{audience}</span>)}
+          </div>
+        </section>
+
+        <section class="course-section" aria-labelledby="outcomes-heading" data-reveal>
+          <p class="eyebrow">What you'll walk away with</p>
+          <h2 id="outcomes-heading" class="display-md mt-4">Practical outcomes</h2>
+          <ul class="course-outcomes mt-6">
+            {course.walkAwayWith.map((outcome) => <li>{outcome}</li>)}
+          </ul>
+        </section>
+
+        <section class="course-section" aria-labelledby="inside-heading" data-reveal>
+          <p class="eyebrow">Inside the workshop</p>
+          <h2 id="inside-heading" class="display-md mt-4">Module titles only</h2>
+          <div class="course-module-groups mt-6">
+            {
+              moduleGroups.map((group) => (
+                <div class="course-module-group">
+                  <h3>{group.label}</h3>
+                  <ol>
+                    {group.modules.map((module) => <li>{module.title}</li>)}
+                  </ol>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        {methodologySegments.length > 0 && (
+          <section class="course-section" aria-labelledby="methodology-heading" data-reveal>
+            <p class="eyebrow">How it runs</p>
+            <h2 id="methodology-heading" class="display-md mt-4">Workshop mix</h2>
+            <div class="methodology-bar mt-6" aria-hidden="true">
+              {
+                methodologySegments.map((segment) => (
+                  <span
+                    class={`methodology-segment methodology-${segment.key}`}
+                    style={`--segment-size: ${segment.value}%`}
+                    title={`${segment.label}: ${segment.value}%`}
+                  ></span>
+                ))
+              }
+            </div>
+            <dl class="methodology-legend mt-5">
+              {
+                methodologySegments.map((segment) => (
+                  <div>
+                    <dt>{segment.label}</dt>
+                    <dd>{segment.value}%</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            {course.methodologyCaption && <p class="body-copy mt-5 max-w-3xl text-[var(--color-ink-muted)]">{course.methodologyCaption}</p>}
+          </section>
+        )}
+
+        {relatedCourses.length > 0 && (
+          <section class="course-section" aria-labelledby="related-heading" data-reveal>
+            <p class="eyebrow">Related courses</p>
+            <h2 id="related-heading" class="display-md mt-4">Keep comparing options</h2>
+            <div class="course-related-grid mt-6">
+              {relatedCourses.map((related) => <ProgramCard course={related} categoryTitle={programCategoryMap.get(related.categorySlug)?.title ?? related.categorySlug} />)}
+            </div>
+          </section>
+        )}
+
+        <section class="course-closer" data-reveal>
+          <p class="eyebrow">Bring it to your team</p>
+          <h2 class="display-md mt-4">Want the full outline?</h2>
+          <p class="body-copy mt-4 max-w-2xl text-[var(--color-ink-muted)]">
+            Tell us your team size, preferred dates, and delivery format. We will send the outline and advise how this course can run for your team.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <Button href={contactHref} variant="filled-ink">Get the full outline</Button>
+            <Button href={whatsappHref} variant="outline">WhatsApp us</Button>
+          </div>
+        </section>
+      </div>
+
+      <aside class="course-aside" aria-label="Course inquiry">
+        <div class="course-inquiry" data-reveal>
+          <p class="eyebrow">Course snapshot</p>
+          <h2 class="mt-4 text-2xl font-semibold leading-tight">{course.title}</h2>
+
+          <dl class="course-facts">
+            <div>
+              <dt>Duration</dt>
+              <dd>{formatDuration(course.durationDays)}</dd>
+            </div>
+            <div>
+              <dt>Language</dt>
+              <dd>{formatLanguage(course.language)}</dd>
+            </div>
+            <div>
+              <dt>Format</dt>
+              <dd>{course.deliveryFormats.join(", ")}</dd>
+            </div>
+            <div>
+              <dt>HRD Corp</dt>
+              <dd>{course.hrdClaimable ? "Claimable" : "Confirm during inquiry"}</dd>
+            </div>
+          </dl>
+
+          <div class="mt-6 grid gap-3">
+            <Button href={contactHref} variant="filled-ink" class="w-full">Get the full outline</Button>
+            <Button href={whatsappHref} variant="outline" class="w-full">WhatsApp us</Button>
+            <a class="course-email-link" href={emailHref}>Email inquiry</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .course-hero {
+    padding-block: calc(var(--nav-height) + 4.5rem) clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .course-breadcrumb {
+    align-items: center;
+    color: var(--color-ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .course-breadcrumb a {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+
+  .course-badges,
+  .course-pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .course-badge,
+  .course-pill-grid span {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 0.55rem 0.75rem;
+  }
+
+  .course-badge-claimable {
+    background: var(--color-success-soft);
+    border-color: color-mix(in srgb, var(--color-success-soft), var(--color-ink) 16%);
+    color: var(--color-ink);
+  }
+
+  .course-media {
+    aspect-ratio: 4 / 3;
+    background:
+      linear-gradient(135deg, rgb(10 10 10 / 0.08), transparent 34%),
+      var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 18rem;
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+
+  .course-media-rule {
+    background: var(--color-accent);
+    border-radius: 999px;
+    height: 0.375rem;
+    width: 4rem;
+  }
+
+  .course-media span {
+    color: var(--color-ink-muted);
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .course-media strong {
+    color: var(--color-ink);
+    display: block;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    letter-spacing: 0;
+    line-height: 1;
+    margin-top: 0.5rem;
+  }
+
+  .course-media-footer {
+    align-items: center;
+    color: var(--color-ink-dim);
+    display: flex;
+    font-size: 0.75rem;
+    font-weight: 700;
+    justify-content: space-between;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .course-layout {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .course-main {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    min-width: 0;
+  }
+
+  .course-section {
+    border-top: 1px solid var(--color-border);
+    padding-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .course-section:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .course-outcomes {
+    display: grid;
+    gap: 0.9rem;
+    list-style: none;
+    margin: 0;
+    max-width: 48rem;
+    padding: 0;
+  }
+
+  .course-outcomes li {
+    align-items: start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-ink-muted);
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: 0.5rem 1fr;
+    padding: 1rem;
+  }
+
+  .course-outcomes li::before {
+    background: var(--color-accent);
+    border-radius: 999px;
+    content: "";
+    height: 0.5rem;
+    margin-top: 0.45rem;
+    width: 0.5rem;
+  }
+
+  .course-module-groups {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .course-module-group {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+  }
+
+  .course-module-group h3 {
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .course-module-group ol {
+    counter-reset: module;
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+
+  .course-module-group li {
+    align-items: center;
+    color: var(--color-ink);
+    counter-increment: module;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 2rem 1fr;
+  }
+
+  .course-module-group li::before {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink-muted);
+    content: counter(module, decimal-leading-zero);
+    display: grid;
+    font-size: 0.7rem;
+    font-weight: 800;
+    height: 2rem;
+    place-items: center;
+    width: 2rem;
+  }
+
+  .methodology-bar {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    display: flex;
+    height: 1.1rem;
+    overflow: hidden;
+  }
+
+  .methodology-segment {
+    flex: 0 0 var(--segment-size);
+  }
+
+  .methodology-interactiveLectures {
+    background: #7c3aed;
+  }
+
+  .methodology-handsOnExercises {
+    background: #0f766e;
+  }
+
+  .methodology-groupActivities {
+    background: #0369a1;
+  }
+
+  .methodology-demonstrations {
+    background: #b45309;
+  }
+
+  .methodology-rolePlaying {
+    background: #be123c;
+  }
+
+  .methodology-selfAssessment {
+    background: #525252;
+  }
+
+  .methodology-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-bottom: 0;
+  }
+
+  .methodology-legend div {
+    align-items: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    display: inline-flex;
+    gap: 0.4rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .methodology-legend dt,
+  .methodology-legend dd {
+    color: var(--color-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .methodology-legend dd {
+    color: var(--color-ink);
+  }
+
+  .course-related-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .course-closer,
+  .course-inquiry {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .course-aside {
+    min-width: 0;
+  }
+
+  .course-facts {
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    gap: 0;
+    margin: 1.25rem 0 0;
+  }
+
+  .course-facts div {
+    align-items: start;
+    border-bottom: 1px solid var(--color-border);
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 6rem 1fr;
+    padding: 0.85rem 0;
+  }
+
+  .course-facts dt {
+    color: var(--color-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .course-facts dd {
+    color: var(--color-ink);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .course-email-link {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .course-module-groups {
+      grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .course-layout {
+      align-items: start;
+      grid-template-columns: minmax(0, 0.68fr) minmax(18rem, 0.32fr);
+    }
+
+    .course-inquiry {
+      position: sticky;
+      top: calc(var(--nav-height) + 2rem);
+    }
+  }
+</style>

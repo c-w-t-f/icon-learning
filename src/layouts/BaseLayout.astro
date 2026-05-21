@@ -8,15 +8,17 @@ import { site } from "../content/site";
 interface Props {
   title?: string;
   description?: string;
+  lang?: string;
 }
 
 const pageTitle = Astro.props.title ?? site.title;
 const pageDescription = Astro.props.description ?? site.description;
+const lang = Astro.props.lang ?? "en-MY";
 const canonical = new URL(Astro.url.pathname, site.url);
 ---
 
 <!doctype html>
-<html lang="en-MY">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
