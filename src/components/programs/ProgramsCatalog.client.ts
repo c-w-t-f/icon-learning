@@ -31,7 +31,7 @@ if (root) {
     category: initialParams.get("category") ?? "all",
     duration: initialParams.get("duration") ?? "all",
     language: initialParams.get("language") ?? "all",
-    hrdOnly: initialParams.get("hrdClaimable") === "true",
+    hrdOnly: initialParams.has("hrdClaimable") ? initialParams.get("hrdClaimable") === "true" : true,
     view: initialParams.get("view") === "flat" ? "flat" : "grouped",
   };
 
