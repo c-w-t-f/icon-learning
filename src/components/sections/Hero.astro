@@ -18,10 +18,10 @@ const { eyebrow, headline, sub, primaryCta, secondaryCta } = Astro.props;
 ---
 
 <section id="hero" class="hero-section container-page flex min-h-[78vh] flex-col items-center justify-center gap-7 pb-[clamp(3rem,6vw,5rem)] pt-[calc(var(--nav-height)+clamp(5rem,9vw,8rem))] text-center">
-  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-  <h1 class="display-xl max-w-4xl text-balance">{headline}</h1>
-  <p class="body-lg max-w-[38ch] text-[var(--color-ink-muted)]">{sub}</p>
-  <div class="flex flex-col gap-3 sm:flex-row">
+  {eyebrow && <p class="eyebrow" data-hero-item>{eyebrow}</p>}
+  <h1 class="display-xl max-w-4xl text-balance" data-hero-item>{headline}</h1>
+  <p class="body-lg max-w-[38ch] text-[var(--color-ink-muted)]" data-hero-item>{sub}</p>
+  <div class="flex flex-col gap-3 sm:flex-row" data-hero-item>
     <Button href={primaryCta.href} size="lg">{primaryCta.label}</Button>
     <Button href={secondaryCta.href} variant="outline" size="lg">{secondaryCta.label}</Button>
   </div>

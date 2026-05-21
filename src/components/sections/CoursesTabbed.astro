@@ -29,7 +29,7 @@ const courseHref = (category: Category, course: string) =>
 
 <section id="categories" class="section-pad bg-[var(--color-surface-muted)]" data-courses-tabbed>
   <div class="container-wide">
-    <div class="max-w-3xl">
+    <div class="max-w-3xl" data-reveal>
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h2 class="display-lg mt-4 text-balance">{heading}</h2>
       {description && <p class="body-lg mt-5 max-w-2xl text-[var(--color-ink-muted)]">{description}</p>}

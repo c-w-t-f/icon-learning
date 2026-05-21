@@ -36,5 +36,8 @@ const canonical = new URL(Astro.url.pathname, site.url);
       <slot />
     </main>
     <Footer />
+    <script>
+      import "../scripts/global-motion";
+    </script>
   </body>
 </html>

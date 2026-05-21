@@ -8,15 +8,16 @@
 
 ## Status Snapshot
 
-- **Phase:** PR 6 ResultsGrid + Testimonials implemented; ready for review.
+- **Phase:** PR 7 Global Motion Polish implemented; ready for review.
 - **Last touched:** 2026-05-21.
-- **Next action:** Review PR 6, then start PR 7 global motion polish per [DESIGN.md Section 11 Phase 2](DESIGN.md).
-- **Working tree:** Homepage now composes `Hero`, `BentoMasonry`, true-tabbed `CoursesTabbed`, `ApproachSection`, `ResultsGrid`, and `CtaCloser` sections using content from `src/content/home.ts`. `Testimonials` exists but is not rendered until approved quotes are added.
+- **Next action:** Review PR 7, then start PR 8 homepage content wiring and final homepage QA per [DESIGN.md Section 11 Phase 2](DESIGN.md).
+- **Working tree:** Homepage now composes `Hero`, `BentoMasonry`, true-tabbed `CoursesTabbed`, `ApproachSection`, `ResultsGrid`, and `CtaCloser` sections using content from `src/content/home.ts`. Global motion polish is loaded from `src/scripts/global-motion.ts`; `Testimonials` exists but is not rendered until approved quotes are added.
 
 ---
 
 ## What's Done
 
+- **2026-05-21** - PR 7 global motion polish added: hero stack staggers on page load, section headings reveal once on scroll, same-page anchor clicks smooth-scroll for no-preference users, and reduced-motion users keep instant/static behavior.
 - **2026-05-21** - PR 6 outcomes and testimonial components added: `ResultsGrid` renders verified-only proof points with reduced-motion-aware count-up, and `Testimonials` ships as a carousel component gated behind an empty approved-quotes list.
 - **2026-05-21** - PR 5 approach sequence added: `ApproachSection` composes four alternating `FeatureStripe` rows for Discover, Customize, Deliver, and Reinforce, with honest CSS process media panels until approved workshop imagery arrives.
 - **2026-05-20** - PR 4 CoursesTabbed added: six homepage categories, show/hide tab behavior after JS enhancement, desktop sidebar labels, mobile horizontal labels, no-JS readable fallback, keyboard tab navigation, and course/category links.
@@ -35,13 +36,13 @@ _Nothing._
 
 ---
 
-## Next Up - PR 7: Global Motion Polish
+## Next Up - PR 8: Homepage Content Wiring + QA
 
 Per [DESIGN.md Section 11 Phase 2](DESIGN.md):
 
-> Global motion polish: reveal-on-scroll observer, page-load hero stagger, smooth anchor scroll, reduced-motion audit, Lighthouse pass.
+> Homepage content wiring: move copy to `src/content/*.ts`, wire real assets, final homepage QA.
 
-PR 7 should keep motion progressive, respect reduced-motion users, and avoid adding framework islands for simple one-shot enhancements.
+PR 8 should replace remaining placeholder media/copy where approved assets exist, keep unsupported claims out, and perform the broad final homepage QA pass.
 
 ---
 
@@ -84,6 +85,10 @@ Workshop photos are still unavailable, so `FeatureStripe` uses structured CSS pa
 ### 2026-05-21 - PR 6 avoids fabricated outcomes and quotes
 
 `ResultsGrid` only counts facts derived from the current catalog/site structure (`9` categories, `6` homepage families, `3` engagement lanes) plus a non-counted "Since 2011" card. `Testimonials` is implemented but gated by `approvedTestimonials`, which remains empty until Icon Learning confirms public-use quotes.
+
+### 2026-05-21 - PR 7 motion is progressive enhancement
+
+Global reveal/stagger styles only activate after `global-motion.ts` adds `data-motion-ready` to `<html>`, so no-JS users see fully visible content. The script exits entirely under `prefers-reduced-motion: reduce`; CSS also suppresses hover transforms in reduced-motion mode.
 
 ### 2026-05-20 - CoursesTabbed changed to true tabs
 
@@ -130,6 +135,7 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 ## Gotchas
 
 - `npm run build` passes with Astro check and static build.
+- Lighthouse CLI is not installed in this workspace, so the PR 7 Lighthouse pass still needs to be run in an environment with Lighthouse/browser automation available.
 - PR 6 adds `src/content/testimonials.ts` with an empty `approvedTestimonials` export; the homepage intentionally omits `#testimonials` until that array has approved entries.
 - PR 5 static output includes `#approach`; local port 4321 is currently occupied by older Node preview processes in this workspace, so direct preview on that port may return stale 500s until those processes are cleared.
 - Production dependency audit is clean via `npm audit --omit=dev --audit-level=moderate`.

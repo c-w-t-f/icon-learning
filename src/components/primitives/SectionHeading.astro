@@ -19,7 +19,7 @@ const alignment = align === "center" ? "mx-auto text-center items-center" : "ite
 const headingSize = size === "xl" ? "display-xl" : "display-lg";
 ---
 
-<div class:list={["flex max-w-3xl flex-col gap-4", alignment]}>
+<div class:list={["flex max-w-3xl flex-col gap-4", alignment]} data-reveal>
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
   <h2 class={headingSize}>{heading}</h2>
   {description && <p class="body-lg max-w-2xl text-[var(--color-ink-muted)]">{description}</p>}
