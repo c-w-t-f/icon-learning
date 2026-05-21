@@ -1,0 +1,65 @@
+---
+import SectionHeading from "../primitives/SectionHeading.astro";
+
+interface ResultItem {
+  label: string;
+  value: string;
+  description: string;
+  countTo?: number;
+  suffix?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  description?: string;
+  items: readonly ResultItem[];
+}
+
+const { eyebrow, heading, description, items } = Astro.props;
+---
+
+<section id="outcomes" class="section-pad bg-[var(--color-surface-muted)]" data-results-grid>
+  <div class="container-wide">
+    <SectionHeading eyebrow={eyebrow} heading={heading} description={description} />
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {
+        items.map((item) => (
+          <article class="result-card">
+            <p class="eyebrow">{item.label}</p>
+            <p class="display-md mt-5 font-bold" aria-label={`${item.value}${item.suffix ?? ""}`}>
+              {item.countTo !== undefined ? (
+                <>
+                  <span data-count-value data-count-to={item.countTo}>{item.value}</span>
+                  {item.suffix && <span>{item.suffix}</span>}
+                </>
+              ) : (
+                <span>{item.value}</span>
+              )}
+            </p>
+            <p class="body-copy mt-4 text-[var(--color-ink-muted)]">{item.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import "./ResultsGrid.client";
+</script>
+
+<style>
+  .result-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    min-height: 17rem;
+    padding: clamp(1.35rem, 3vw, 2rem);
+  }
+
+  .result-card .display-md {
+    font-weight: 700;
+  }
+</style>

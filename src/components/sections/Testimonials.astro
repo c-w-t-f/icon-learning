@@ -1,0 +1,160 @@
+---
+import SectionHeading from "../primitives/SectionHeading.astro";
+
+interface Testimonial {
+  quote: string;
+  name?: string;
+  role?: string;
+  company?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading: string;
+  description?: string;
+  items: readonly Testimonial[];
+}
+
+const { eyebrow, heading, description, items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section id="testimonials" class="section-pad bg-[var(--color-bg)]" data-testimonials>
+      <div class="container-wide">
+        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <SectionHeading eyebrow={eyebrow} heading={heading} description={description} />
+          <div class="testimonial-controls" aria-label="Testimonials carousel controls">
+            <button class="testimonial-button" type="button" data-testimonial-prev aria-label="Previous testimonial">
+              <span aria-hidden="true">&lt;</span>
+            </button>
+            <button class="testimonial-button" type="button" data-testimonial-next aria-label="Next testimonial">
+              <span aria-hidden="true">&gt;</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="testimonial-track mt-10" data-testimonial-track tabindex="0" aria-label="Testimonials">
+          {items.map((item) => {
+            const initials = (item.name ?? "Icon Learning")
+              .split(" ")
+              .map((part) => part.charAt(0))
+              .join("")
+              .slice(0, 2);
+
+            return (
+              <article class="testimonial-card">
+                <p class="body-copy">"{item.quote}"</p>
+                <div class="mt-8 flex items-center gap-3">
+                  <div class="testimonial-avatar" aria-hidden="true">{initials}</div>
+                  <div>
+                    {item.name && <p class="font-semibold">{item.name}</p>}
+                    {(item.role || item.company) && (
+                      <p class="body-sm text-[var(--color-ink-muted)]">
+                        {[item.role, item.company].filter(Boolean).join(", ")}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import "./Testimonials.client";
+</script>
+
+<style>
+  .testimonial-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .testimonial-button {
+    align-items: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink);
+    display: inline-flex;
+    height: 40px;
+    justify-content: center;
+    transition:
+      border-color 180ms var(--ease-standard),
+      box-shadow 180ms var(--ease-standard),
+      transform 180ms var(--ease-standard);
+    width: 40px;
+  }
+
+  .testimonial-button:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  .testimonial-track {
+    display: flex;
+    gap: 1rem;
+    margin-inline: calc(var(--page-gutter) * -1);
+    overflow-x: auto;
+    padding: 0 var(--page-gutter) 0.5rem;
+    scroll-padding-inline: var(--page-gutter);
+    scroll-snap-type: x mandatory;
+  }
+
+  .testimonial-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    flex: 0 0 min(32rem, 82vw);
+    padding: clamp(1.35rem, 3vw, 2rem);
+    scroll-snap-align: start;
+    transition:
+      border-color 180ms var(--ease-standard),
+      box-shadow 180ms var(--ease-standard),
+      transform 180ms var(--ease-standard);
+  }
+
+  .testimonial-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  .testimonial-avatar {
+    align-items: center;
+    background: var(--color-accent-soft);
+    border-radius: 999px;
+    color: var(--color-accent);
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    font-weight: 700;
+    height: 2.75rem;
+    justify-content: center;
+    width: 2.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .testimonial-card {
+      flex-basis: min(52vw, 42rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-button,
+    .testimonial-card {
+      transition: none;
+    }
+
+    .testimonial-button:hover,
+    .testimonial-card:hover {
+      transform: none;
+    }
+  }
+</style>
