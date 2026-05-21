@@ -8,15 +8,16 @@
 
 ## Status Snapshot
 
-- **Phase:** PR 10 Programs Catalog implemented; ready for review.
+- **Phase:** PR 11 Program Category Pages implemented; ready for review.
 - **Last touched:** 2026-05-21.
-- **Next action:** Review PR 10, then start PR 11 `/programs/[category]` template per [DESIGN.md Section 11 Phase 3](DESIGN.md).
-- **Working tree:** Homepage remains complete through PR 8. PR 10 adds `/programs`, typed course/category helpers, `ProgramCard`, and client-side catalog filtering over the first ten PR 9 course summaries.
+- **Next action:** Review PR 11, then start PR 12 `/programs/[category]/[course]` course detail template per [DESIGN.md Section 11 Phase 3](DESIGN.md).
+- **Working tree:** Homepage remains complete through PR 8. PR 11 adds all nine `/programs/[category]` pages with category overview copy, course lists, audience and delivery sections, related categories, sticky inquiry panel, and category-level structured data.
 
 ---
 
 ## What's Done
 
+- **2026-05-21** - PR 11 program category pages added: all nine `/programs/[category]` routes render category hero, overview, available course list, audience, delivery formats, related categories, sticky inquiry panel, and BreadcrumbList/ItemList structured data.
 - **2026-05-21** - PR 10 programs catalog added: `/programs` renders grouped and flat views from top-level course JSON, with `ProgramCard`, category/duration/language chips, HRD Corp claimable toggle, keyword search, URL state, empty state, and production build verification.
 - **2026-05-21** - PR 9 course rewrite pipeline started: added `src/content/courses/schema.ts`, `npm run courses:inventory`, generated a tracked source inventory at `src/content/courses/_curation/inventory.json`, and created 10 representative summary-only course JSON drafts across all 9 categories plus Bahasa Malaysia and multi-day edge cases.
 - **2026-05-21** - PR 8 homepage wiring and static QA completed: added the missing `ServicesBento` section at `#services`, wired services copy through `home.ts`, confirmed homepage anchors and production build, and kept unavailable workshop/category/testimonial assets out of the UI.
@@ -39,13 +40,13 @@ _Nothing._
 
 ---
 
-## Next Up - PR 11: Program Category Pages
+## Next Up - PR 12: Course Detail Pages
 
 Per [DESIGN.md Section 11 Phase 3](DESIGN.md):
 
-> `/programs/[category]` template; populate the 9 category pages with grouped course lists, audience, related categories, sticky inquiry panel.
+> `/programs/[category]/[course]` summary template. Hero, "Why this matters", "Built for" pills, "What you'll walk away with", "Inside the workshop" (module titles only, grouped by day), "How it runs" methodology bar + caption, "Bring it to your team" closer, sticky inquiry panel.
 
-PR 11 should reuse `programCategories`, `coursesByCategory`, and `ProgramCard`, and should keep category pages useful even while only the first 10 reviewed course summaries are available.
+PR 12 should use the PR 9 course JSON directly, keep pages summary-only, and preserve the final URL shape already used by `ProgramCard`.
 
 ---
 
@@ -117,6 +118,14 @@ The first rewrite batch covers all nine categories, plus Bahasa Malaysia (`Kursu
 
 The `/programs` page is readable as grouped HTML without JavaScript. `ProgramsCatalog.client.ts` adds search, category/duration/language filters, HRD toggle, grouped/flat view switching, result counts, and URL query state.
 
+### 2026-05-21 - PR 11 category metadata lives with category content
+
+`src/content/programs.ts` now carries category-page overview copy, focus areas, audience, delivery formats, and related-category relationships. The `/programs/[category]` route uses the same data for all nine static pages.
+
+### 2026-05-21 - PR 11 category pages are static and no-JS
+
+Category pages use `getStaticPaths()` from `programCategories`; no client script is needed. Each page includes BreadcrumbList and ItemList JSON-LD in the rendered HTML.
+
 ### 2026-05-20 - CoursesTabbed changed to true tabs
 
 The category showcase now hides inactive panels after JavaScript enhancement instead of scroll-spying through all panels. All panels remain in the HTML and visible without JavaScript for fallback and crawlability.
@@ -162,6 +171,8 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 ## Gotchas
 
 - `npm run build` passes with Astro check and static build.
+- PR 11 builds all nine `/programs/[category]/index.html` pages. Course cards still link through to `/programs/[category]/[course]`, which remains the PR 12 task.
+- Category page course grouping is currently flat because the PR 9 sample batch has 1-2 courses per category. Add sub-theme grouping when the bulk catalog creates categories with 15+ courses.
 - PR 10 builds `/programs/index.html` and imports the catalog client from `src/components/programs/`. Keep browser-only scripts out of `src/pages/`; Astro treats files there as routes.
 - PR 10 catalog cards link to the final `/programs/[category]/[course]` URL shape, but those detail routes are not implemented until PR 12.
 - The HRD Corp filter currently returns zero results because all PR 9 sample courses intentionally have `hrdClaimable: false` pending confirmation.
@@ -197,6 +208,7 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 | `src/components/programs/` | Catalog cards and catalog client enhancement. | Yes |
 | `src/components/sections/` | Homepage sections. | Yes |
 | `src/pages/programs/index.astro` | Programs catalog route. | Yes |
+| `src/pages/programs/[category].astro` | Program category detail route for all 9 categories. | Yes |
 | `src/styles/tokens.css` | Design tokens. | Yes |
 | `src/styles/global.css` | Tailwind entry and global styles. | Yes |
 | `src/content/` | Site/navigation content. | Yes |

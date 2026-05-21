@@ -1,0 +1,452 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Button from "../../components/primitives/Button.astro";
+import ProgramCard from "../../components/programs/ProgramCard.astro";
+import { courseUrl, coursesByCategory } from "../../content/courses";
+import { formatDuration, programCategories, programCategoryMap, type ProgramCategory } from "../../content/programs";
+import { site } from "../../content/site";
+
+export function getStaticPaths() {
+  return programCategories.map((category) => ({
+    params: { category: category.slug },
+    props: { category },
+  }));
+}
+
+interface Props {
+  category: ProgramCategory;
+}
+
+const { category } = Astro.props;
+const categoryCourses = coursesByCategory[category.slug] ?? [];
+const relatedCategories = category.relatedCategorySlugs
+  .map((slug) => programCategoryMap.get(slug))
+  .filter((related): related is ProgramCategory => Boolean(related));
+const title = `${category.title} Training Malaysia | Icon Learning`;
+const description = `${category.summary} Browse ${categoryCourses.length} course${categoryCourses.length === 1 ? "" : "s"} for Malaysian teams.`;
+const categoryUrl = new URL(`/programs/${category.slug}`, site.url).toString();
+const emailHref = `${site.emailHref}?subject=${encodeURIComponent(`Training inquiry: ${category.title}`)}`;
+const courseCountLabel = `${categoryCourses.length} course${categoryCourses.length === 1 ? "" : "s"}`;
+const durationSummary = Array.from(new Set(categoryCourses.map((course) => formatDuration(course.durationDays))));
+const languages = Array.from(new Set(categoryCourses.map((course) => course.language)));
+const languageSummary = languages
+  .map((language) => {
+    if (language === "ms") return "Bahasa Malaysia";
+    if (language === "en+ms") return "English + BM";
+    return "English";
+  })
+  .join(", ");
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Programs",
+        item: new URL("/programs", site.url).toString(),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: category.title,
+        item: categoryUrl,
+      },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${category.title} training courses`,
+    itemListElement: categoryCourses.map((course, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: new URL(courseUrl(course), site.url).toString(),
+      name: course.title,
+    })),
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <section class="category-hero">
+    <div class="container-wide">
+      <div class="category-breadcrumb body-sm" data-reveal>
+        <a href="/programs">Programs</a>
+        <span aria-hidden="true">/</span>
+        <span>{category.shortTitle}</span>
+      </div>
+
+      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.62fr)_minmax(20rem,0.38fr)] lg:items-end">
+        <div>
+          <p class="eyebrow" data-reveal>Program category</p>
+          <h1 class="display-xl mt-4 max-w-4xl text-balance" data-reveal>{category.title} training</h1>
+          <p class="body-lg mt-5 max-w-3xl text-[var(--color-ink-muted)]" data-reveal>{category.summary}</p>
+        </div>
+
+        <div class="category-media" aria-hidden="true" data-reveal>
+          <div class="category-media-rule"></div>
+          <div class="category-media-grid">
+            {category.focusAreas.slice(0, 4).map((area) => <span>{area}</span>)}
+          </div>
+          <div class="category-media-footer">
+            <span>{courseCountLabel}</span>
+            <span>Icon Learning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad pt-0">
+    <div class="container-wide category-layout">
+      <div class="category-main">
+        <section class="category-section" aria-labelledby="overview-heading" data-reveal>
+          <p class="eyebrow">Overview</p>
+          <h2 id="overview-heading" class="display-md mt-4">What this category covers</h2>
+          <p class="body-copy mt-4 max-w-3xl text-[var(--color-ink-muted)]">{category.overview}</p>
+
+          <div class="category-pill-grid mt-6">
+            {category.focusAreas.map((area) => <span>{area}</span>)}
+          </div>
+        </section>
+
+        <section class="category-section" aria-labelledby="courses-heading" data-reveal>
+          <div class="category-section-heading">
+            <div>
+              <p class="eyebrow">Courses</p>
+              <h2 id="courses-heading" class="display-md mt-4">Available programmes</h2>
+            </div>
+            <a class="category-text-link" href={`/programs?category=${category.slug}`}>Filter in catalog -&gt;</a>
+          </div>
+
+          <div class="category-course-grid mt-6">
+            {categoryCourses.map((course) => <ProgramCard course={course} categoryTitle={category.title} />)}
+          </div>
+        </section>
+
+        <section class="category-section category-info-grid" data-reveal>
+          <div>
+            <p class="eyebrow">Audience</p>
+            <h2 class="display-md mt-4">Who should attend</h2>
+            <ul class="category-list mt-5">
+              {category.audience.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+
+          <div>
+            <p class="eyebrow">Formats</p>
+            <h2 class="display-md mt-4">How it can run</h2>
+            <ul class="category-list mt-5">
+              {category.deliveryFormats.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </section>
+
+        <section class="category-section" aria-labelledby="related-heading" data-reveal>
+          <p class="eyebrow">Related categories</p>
+          <h2 id="related-heading" class="display-md mt-4">Useful adjacent training lanes</h2>
+          <div class="related-grid mt-6">
+            {
+              relatedCategories.map((related) => (
+                <a class="related-card" href={`/programs/${related.slug}`}>
+                  <span class="body-sm font-semibold text-[var(--color-accent)]">{related.shortTitle}</span>
+                  <strong>{related.title}</strong>
+                  <span>{related.summary}</span>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      </div>
+
+      <aside class="category-aside" aria-label="Training inquiry">
+        <div class="category-inquiry" data-reveal>
+          <p class="eyebrow">Bring this to your team</p>
+          <h2 class="mt-4 text-2xl font-semibold leading-tight">Plan training for your team</h2>
+          <p class="body-sm mt-4 text-[var(--color-ink-muted)]">
+            Share your team size, preferred dates, and delivery format. Icon Learning will point you to the right outline.
+          </p>
+
+          <dl class="category-facts">
+            <div>
+              <dt>Courses</dt>
+              <dd>{categoryCourses.length}</dd>
+            </div>
+            <div>
+              <dt>Durations</dt>
+              <dd>{durationSummary.length > 0 ? durationSummary.join(", ") : "By inquiry"}</dd>
+            </div>
+            <div>
+              <dt>Languages</dt>
+              <dd>{languageSummary || "English"}</dd>
+            </div>
+            <div>
+              <dt>HRD Corp</dt>
+              <dd>Confirm during inquiry</dd>
+            </div>
+          </dl>
+
+          <div class="mt-6 grid gap-3">
+            <Button href={site.whatsappHref} variant="filled-ink" class="w-full">WhatsApp us</Button>
+            <Button href={emailHref} variant="outline" class="w-full">Email inquiry</Button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .category-hero {
+    padding-block: calc(var(--nav-height) + 4.5rem) clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .category-breadcrumb {
+    align-items: center;
+    color: var(--color-ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .category-breadcrumb a {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+
+  .category-media {
+    aspect-ratio: 4 / 3;
+    background:
+      linear-gradient(135deg, rgb(10 10 10 / 0.08), transparent 34%),
+      var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 18rem;
+    overflow: hidden;
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+
+  .category-media-rule {
+    background: var(--color-accent);
+    border-radius: 999px;
+    height: 0.375rem;
+    width: 4rem;
+  }
+
+  .category-media-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .category-media-grid span,
+  .category-pill-grid span {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 0;
+    padding: 0.65rem 0.8rem;
+    text-align: center;
+  }
+
+  .category-media-footer {
+    align-items: center;
+    color: var(--color-ink-dim);
+    display: flex;
+    font-size: 0.75rem;
+    font-weight: 700;
+    justify-content: space-between;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .category-layout {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .category-main {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    min-width: 0;
+  }
+
+  .category-section {
+    border-top: 1px solid var(--color-border);
+    padding-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .category-section:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .category-section-heading {
+    align-items: end;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .category-text-link {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .category-pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .category-course-grid,
+  .related-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .category-info-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .category-list {
+    color: var(--color-ink-muted);
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .category-list li {
+    align-items: center;
+    display: flex;
+    gap: 0.65rem;
+  }
+
+  .category-list li::before {
+    background: var(--color-accent);
+    border-radius: 999px;
+    content: "";
+    height: 0.45rem;
+    flex: 0 0 0.45rem;
+    width: 0.45rem;
+  }
+
+  .related-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: 0.55rem;
+    padding: 1rem;
+    transition:
+      border-color 180ms var(--ease-standard),
+      box-shadow 180ms var(--ease-standard),
+      transform 180ms var(--ease-standard);
+  }
+
+  .related-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .related-card strong {
+    color: var(--color-ink);
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .related-card span:last-child {
+    color: var(--color-ink-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .category-aside {
+    min-width: 0;
+  }
+
+  .category-inquiry {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+  }
+
+  .category-facts {
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    gap: 0;
+    margin: 1.25rem 0 0;
+  }
+
+  .category-facts div {
+    align-items: start;
+    border-bottom: 1px solid var(--color-border);
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 6rem 1fr;
+    padding: 0.85rem 0;
+  }
+
+  .category-facts dt {
+    color: var(--color-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .category-facts dd {
+    color: var(--color-ink);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .category-section-heading,
+    .category-info-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .category-layout {
+      align-items: start;
+      grid-template-columns: minmax(0, 0.68fr) minmax(18rem, 0.32fr);
+    }
+
+    .category-inquiry {
+      position: sticky;
+      top: calc(var(--nav-height) + 2rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .related-card {
+      transition: none;
+    }
+
+    .related-card:hover {
+      transform: none;
+    }
+  }
+</style>
