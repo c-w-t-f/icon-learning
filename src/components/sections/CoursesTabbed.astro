@@ -30,15 +30,16 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
   typeof course === "string" ? courseHref(category, course) : course.href;
 ---
 
-<section id="categories" class="section-pad bg-[var(--color-surface-muted)]" data-courses-tabbed>
-  <div class="container-wide">
+<section id="categories" class="section-pad bg-[var(--color-surface-muted)] relative" style={`--category-count: ${categories.length}`} data-courses-tabbed>
+  <div class="sticky-wrapper">
+    <div class="container-wide">
     <div class="max-w-3xl" data-reveal>
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-      <h2 class="display-lg mt-4 text-balance">{heading}</h2>
-      {description && <p class="body-lg mt-5 max-w-2xl text-[var(--color-ink-muted)]">{description}</p>}
+      <h2 class="display-lg mt-3 text-balance">{heading}</h2>
+      {description && <p class="body-lg mt-4 max-w-2xl text-[var(--color-ink-muted)]">{description}</p>}
     </div>
 
-    <div class="mt-12 grid gap-10 lg:grid-cols-[0.34fr_0.66fr] lg:items-start">
+    <div class="mt-8 lg:mt-6 grid gap-10 lg:grid-cols-[0.34fr_0.66fr] lg:items-start">
       <div class="course-labels" role="tablist" aria-label="Program categories">
         <div class="course-label-list">
           {
@@ -86,7 +87,7 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
                 <p class="body-copy mt-4 max-w-2xl text-[var(--color-ink-muted)]">{category.intro}</p>
               </div>
 
-              <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              <div class="mt-6 lg:mt-4 grid gap-3 sm:grid-cols-2">
                 {category.courses.map((course) => (
                   <a class="course-card" href={previewHref(category, course)}>
                     <span>{courseLabel(course)}</span>
@@ -95,7 +96,7 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
                 ))}
               </div>
 
-              <div class="mt-7">
+              <div class="mt-7 lg:mt-5">
                 <Button href={`/programs/${category.slug}`} variant="ghost">
                   Explore {category.title} -&gt;
                 </Button>
@@ -106,9 +107,10 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
       </div>
     </div>
 
-    <div class="mt-12 flex justify-center">
+    <div class="flex justify-center">
       <Button href={browseAllCta.href} variant="outline">{browseAllCta.label} -&gt;</Button>
     </div>
+  </div>
   </div>
 </section>
 
@@ -261,13 +263,26 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
   }
 
   @media (min-width: 1024px) {
+    [data-courses-tabbed][data-enhanced] {
+      padding-block: 0;
+      height: calc(100vh + (100vh * (var(--category-count) - 1) * 0.75));
+    }
+
+    [data-courses-tabbed][data-enhanced] .sticky-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
     .course-label-list {
       flex-direction: column;
       margin-inline: 0;
       overflow: visible;
       padding: 0;
-      position: sticky;
-      top: calc(var(--nav-height) + 4rem);
     }
 
     .course-label {
