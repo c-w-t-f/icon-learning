@@ -8,15 +8,16 @@
 
 ## Status Snapshot
 
-- **Phase:** PR 14 About Us implemented; ready for review.
+- **Phase:** PR 15 Clients implemented; ready for review.
 - **Last touched:** 2026-05-21.
-- **Next action:** Review PR 14, then start PR 15 `/clients` with `LogoWall` per [DESIGN.md Section 11 Phase 4](DESIGN.md).
-- **Working tree:** Homepage remains complete through PR 8. PR 14 adds `/about-us`, centralizes verified company facts in `site.ts`, and uses a separate `about.ts` content module for story, services, philosophy, expertise, values, and CTA copy.
+- **Next action:** Review PR 15, then start PR 16 `/contact` + form behavior + `ContactPanel` per [DESIGN.md Section 11 Phase 4](DESIGN.md).
+- **Working tree:** Homepage remains complete through PR 8. PR 15 adds `/clients`, client logo content, improved `LogoWall` tiles, engagement-type cards, CTA, and Breadcrumb/LocalBusiness JSON-LD without testimonials or fabricated metrics.
 
 ---
 
 ## What's Done
 
+- **2026-05-21** - PR 15 Clients page added: `/clients` renders the verified public client logo set via `LogoWall`, broad sector groupings, engagement types, CTA, and Breadcrumb/LocalBusiness JSON-LD while avoiding client counts, testimonials, and outcome claims.
 - **2026-05-21** - PR 14 About Us page added: `/about-us` renders verified company story, 15 December 2011 establishment date, company registration number, services, training philosophy, trainer expertise, values, sticky company details, CTA, brand-logo visual, and Breadcrumb/LocalBusiness JSON-LD.
 - **2026-05-21** - PR 13 bulk content review pass completed for the current 10 publishable course JSON files: added `npm run courses:review`, generated `src/content/courses/_curation/review-report.json`, fixed all broken `relatedSlugs`, corrected public-facing title polish, and verified zero hard review failures.
 - **2026-05-21** - PR 12 course detail pages added: all ten course JSON records render at `/programs/[category]/[course]` with hero badges, Why this matters, Built for, outcomes, module-title-only workshop view, methodology bar, closer, sticky inquiry panel, and Course/Breadcrumb JSON-LD.
@@ -43,13 +44,13 @@ _Nothing._
 
 ---
 
-## Next Up - PR 15: Clients
+## Next Up - PR 16: Contact
 
 Per [DESIGN.md Section 11 Phase 4](DESIGN.md):
 
-> `/clients` (`LogoWall`).
+> `/contact` + form behavior + `ContactPanel`.
 
-PR 15 should build the Clients page using approved client logo assets, avoiding fabricated testimonials or unsupported client metrics.
+PR 16 should build the contact page, inquiry paths, and form behavior including training-interest prefill from `/contact?training=...`.
 
 ---
 
@@ -157,6 +158,14 @@ The bulk copy pass applies to the 10 current course JSON files from PR 9. The fu
 
 About page LocalBusiness JSON-LD includes the verified address, telephone, email, founding date, opening hours, and service areas. Geo coordinates remain omitted until the exact Sri Petaling office coordinates are confirmed.
 
+### 2026-05-21 - PR 15 clients page uses logos, not metrics
+
+The Clients page uses the existing public logo assets and broad sector groupings as proof. It intentionally avoids client counts, satisfaction scores, case-study outcomes, or quotes until Icon Learning approves those materials.
+
+### 2026-05-21 - PR 15 upgrades LogoWall for shared use
+
+`LogoWall.astro` now owns consistent grayscale logo tiles, optional small metadata captions, hover color reveal, and reduced-motion-safe hover behavior. It remains static Astro with no client script.
+
 ### 2026-05-20 - CoursesTabbed changed to true tabs
 
 The category showcase now hides inactive panels after JavaScript enhancement instead of scroll-spying through all panels. All panels remain in the HTML and visible without JavaScript for fallback and crawlability.
@@ -202,6 +211,8 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 ## Gotchas
 
 - `npm run build` passes with Astro check and static build.
+- PR 15 builds `/clients/index.html` and raises the static build output to 23 pages.
+- Client sector labels are broad scan labels based on the public logo set; confirm exact industry/engagement labels with Icon Learning before launch if they need to be contractual.
 - PR 14 builds `/about-us/index.html` and raises the static build output to 22 pages.
 - `/about-us` uses `/contact` as a request-training destination in one CTA, but the actual contact page remains PR 16.
 - `npm run courses:review` currently reports 0 hard failures and 10 warnings, all because HRD claimable status remains unconfirmed on the current course set.
@@ -243,10 +254,12 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 | `src/layouts/BaseLayout.astro` | Global HTML shell and metadata. | Yes |
 | `src/components/layout/` | `Nav` and `Footer`. | Yes |
 | `src/components/primitives/` | Shared PR 1 primitives. | Yes |
+| `src/components/primitives/LogoWall.astro` | Reusable grayscale client logo wall. | Yes |
 | `src/components/programs/` | Catalog cards and catalog client enhancement. | Yes |
 | `src/components/sections/` | Homepage sections. | Yes |
 | `scripts/course-review.mjs` | Course JSON review gate and report generator. | Yes |
 | `src/pages/about-us.astro` | About page route with company story and LocalBusiness JSON-LD. | Yes |
+| `src/pages/clients.astro` | Clients page route with logo wall and LocalBusiness JSON-LD. | Yes |
 | `src/pages/programs/index.astro` | Programs catalog route. | Yes |
 | `src/pages/programs/[category].astro` | Program category detail route for all 9 categories. | Yes |
 | `src/pages/programs/[category]/[course].astro` | Summary-only course detail route. | Yes |
@@ -254,6 +267,7 @@ The consolidated spec remains authoritative for: light theme only, scroll-spy `C
 | `src/styles/global.css` | Tailwind entry and global styles. | Yes |
 | `src/content/` | Site/navigation content. | Yes |
 | `src/content/about.ts` | About page copy and section data. | Yes |
+| `src/content/clients.ts` | Clients page copy, logo imports, and group data. | Yes |
 | `src/content/courses/` | Summary-only course JSON, schema, and tracked curation metadata. | Yes |
 | `src/content/courses/_curation/review-report.json` | Latest generated course review report. | Yes |
 | `course/documents/*.pdf` | Canonical raw course outlines. | No - source material only |

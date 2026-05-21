@@ -3,32 +3,134 @@ interface Logo {
   name: string;
   src?: string;
   href?: string;
+  meta?: string;
 }
 
 interface Props {
   logos: Logo[];
   class?: string;
+  ariaLabel?: string;
 }
 
-const { logos, class: className } = Astro.props;
+const { logos, class: className, ariaLabel = "Client logos" } = Astro.props;
 ---
 
-<ul class:list={["grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6", className]} aria-label="Client logos">
+<ul class:list={["logo-wall", className]} aria-label={ariaLabel}>
   {
     logos.map((logo) => (
-      <li class="flex min-h-24 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-5 text-center text-sm font-semibold text-[var(--color-ink-muted)]">
-        {logo.src ? (
-          logo.href ? (
-            <a href={logo.href} aria-label={logo.name}>
+      <li class="logo-tile">
+        <div class="logo-image-wrap">
+          {logo.src ? (
+            logo.href ? (
+              <a href={logo.href} aria-label={logo.name}>
+                <img src={logo.src} alt={logo.name} loading="lazy" />
+              </a>
+            ) : (
               <img src={logo.src} alt={logo.name} loading="lazy" />
-            </a>
+            )
           ) : (
-            <img src={logo.src} alt={logo.name} loading="lazy" />
-          )
-        ) : (
-          <span>{logo.name}</span>
-        )}
+            <span>{logo.name}</span>
+          )}
+        </div>
+        {logo.meta && <span class="logo-meta">{logo.meta}</span>}
       </li>
     ))
   }
 </ul>
+
+<style>
+  .logo-wall {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .logo-tile {
+    align-items: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: 0.75rem;
+    min-height: 7rem;
+    padding: 1rem;
+    text-align: center;
+    transition:
+      border-color 180ms var(--ease-standard),
+      box-shadow 180ms var(--ease-standard),
+      transform 180ms var(--ease-standard);
+  }
+
+  .logo-tile:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .logo-image-wrap {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 3.25rem;
+  }
+
+  .logo-image-wrap img {
+    filter: grayscale(1);
+    max-height: 3rem;
+    max-width: 9rem;
+    object-fit: contain;
+    opacity: 0.72;
+    transition:
+      filter 180ms var(--ease-standard),
+      opacity 180ms var(--ease-standard);
+  }
+
+  .logo-tile:hover img,
+  .logo-tile:focus-within img {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+
+  .logo-image-wrap span {
+    color: var(--color-ink-muted);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .logo-meta {
+    color: var(--color-ink-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 640px) {
+    .logo-wall {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .logo-wall {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-tile,
+    .logo-image-wrap img {
+      transition: none;
+    }
+
+    .logo-tile:hover {
+      transform: none;
+    }
+  }
+</style>

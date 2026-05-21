@@ -1,0 +1,357 @@
+---
+import Button from "../components/primitives/Button.astro";
+import LogoWall from "../components/primitives/LogoWall.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { clientGroups, clientsPage } from "../content/clients";
+import { site } from "../content/site";
+
+const pageUrl = new URL("/clients", site.url).toString();
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: site.url,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Clients",
+        item: pageUrl,
+      },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: site.name,
+    legalName: site.legalName,
+    url: site.url,
+    email: site.email,
+    telephone: site.phone,
+    foundingDate: site.foundingDate,
+    identifier: site.registrationNumber,
+    slogan: site.brandLine,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "No 1, Jalan Radin 5",
+      postalCode: "57000",
+      addressLocality: "Sri Petaling",
+      addressRegion: "Kuala Lumpur",
+      addressCountry: "MY",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
+    areaServed: {
+      "@type": "Country",
+      name: "Malaysia",
+    },
+    knowsAbout: [
+      "Corporate training",
+      "Strategic consulting",
+      "ISO management system consultancy",
+      "Safety and technical training",
+    ],
+  },
+];
+---
+
+<BaseLayout title={clientsPage.title} description={clientsPage.description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <section class="clients-hero">
+    <div class="container-wide">
+      <div class="clients-breadcrumb body-sm" data-reveal>
+        <a href="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>Clients</span>
+      </div>
+
+      <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.64fr)_minmax(20rem,0.36fr)] lg:items-end">
+        <div>
+          <p class="eyebrow" data-reveal>{clientsPage.hero.eyebrow}</p>
+          <h1 class="display-xl mt-4 max-w-4xl text-balance" data-reveal>{clientsPage.hero.heading}</h1>
+          <p class="body-lg mt-5 max-w-3xl text-[var(--color-ink-muted)]" data-reveal>{clientsPage.hero.sub}</p>
+          <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+            <Button href={clientsPage.hero.primaryCta.href} variant="filled-ink">{clientsPage.hero.primaryCta.label}</Button>
+            <Button href={clientsPage.hero.secondaryCta.href} variant="outline">{clientsPage.hero.secondaryCta.label}</Button>
+          </div>
+        </div>
+
+        <div class="clients-proof-panel" data-reveal>
+          <p class="eyebrow">{clientsPage.proof.eyebrow}</p>
+          <h2>{clientsPage.proof.heading}</h2>
+          <p>{clientsPage.proof.body}</p>
+          <div class="clients-proof-tags" aria-label="Engagement types">
+            {clientsPage.engagementTypes.map((item) => <span>{item.title}</span>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad pt-0">
+    <div class="container-wide">
+      <div class="clients-section-heading" data-reveal>
+        <p class="eyebrow">Logo wall</p>
+        <h2 class="display-md mt-4">Selected public client logos</h2>
+        <p class="body-copy mt-4 max-w-3xl text-[var(--color-ink-muted)]">
+          Grouped broadly so buyers can scan familiar sectors without turning the page into a claims list.
+        </p>
+      </div>
+
+      <div class="clients-groups">
+        {
+          clientGroups.map((group) => (
+            <section class="clients-logo-group" aria-labelledby={`${group.title.toLowerCase().replaceAll(" ", "-")}-heading`} data-reveal>
+              <div class="clients-logo-group-heading">
+                <div>
+                  <h3 id={`${group.title.toLowerCase().replaceAll(" ", "-")}-heading`}>{group.title}</h3>
+                  <p>{group.summary}</p>
+                </div>
+              </div>
+              <LogoWall logos={group.logos} ariaLabel={`${group.title} client logos`} />
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="clients-engagement section-pad">
+    <div class="container-wide">
+      <div class="clients-engagement-heading" data-reveal>
+        <p class="eyebrow">How teams work with Icon Learning</p>
+        <h2 class="display-md mt-4">Engagement types</h2>
+      </div>
+
+      <div class="clients-engagement-grid mt-6">
+        {
+          clientsPage.engagementTypes.map((item) => (
+            <a class="clients-engagement-card" href={item.href} data-reveal>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <span>Explore -&gt;</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="clients-cta section-pad">
+    <div class="container-page">
+      <div class="clients-cta-inner" data-reveal>
+        <p class="eyebrow justify-center">Start a conversation</p>
+        <h2 class="display-lg mt-4 text-balance">{clientsPage.cta.heading}</h2>
+        <p class="body-lg mx-auto mt-5 max-w-[42rem] text-[var(--color-ink-muted)]">{clientsPage.cta.sub}</p>
+        <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button href={clientsPage.cta.primaryCta.href} size="lg">{clientsPage.cta.primaryCta.label}</Button>
+          <Button href={clientsPage.cta.secondaryCta.href} variant="outline" size="lg">{clientsPage.cta.secondaryCta.label}</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .clients-hero {
+    padding-block: calc(var(--nav-height) + 4.5rem) clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .clients-breadcrumb {
+    align-items: center;
+    color: var(--color-ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .clients-breadcrumb a {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+
+  .clients-proof-panel {
+    background:
+      linear-gradient(135deg, rgb(10 10 10 / 0.08), transparent 34%),
+      var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    min-height: 18rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .clients-proof-panel h2 {
+    color: var(--color-ink);
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.08;
+    margin: 3.5rem 0 0;
+  }
+
+  .clients-proof-panel p:not(.eyebrow) {
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    margin: 1rem 0 0;
+  }
+
+  .clients-proof-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .clients-proof-tags span {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .clients-section-heading {
+    max-width: 48rem;
+  }
+
+  .clients-groups {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .clients-logo-group {
+    border-top: 1px solid var(--color-border);
+    display: grid;
+    gap: 1.25rem;
+    padding-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .clients-logo-group:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .clients-logo-group-heading {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .clients-logo-group h3 {
+    color: var(--color-ink);
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .clients-logo-group p {
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    margin: 0.65rem 0 0;
+    max-width: 46rem;
+  }
+
+  .clients-engagement {
+    background: var(--color-surface-muted);
+  }
+
+  .clients-engagement-heading {
+    max-width: 44rem;
+  }
+
+  .clients-engagement-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .clients-engagement-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: 0.85rem;
+    padding: 1.25rem;
+    transition:
+      border-color 180ms var(--ease-standard),
+      box-shadow 180ms var(--ease-standard),
+      transform 180ms var(--ease-standard);
+  }
+
+  .clients-engagement-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .clients-engagement-card h3 {
+    color: var(--color-ink);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .clients-engagement-card p {
+    color: var(--color-ink-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .clients-engagement-card span {
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 800;
+    margin-top: 0.25rem;
+  }
+
+  .clients-cta {
+    background: var(--color-bg);
+  }
+
+  .clients-cta-inner {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    margin-inline: auto;
+    max-width: 45rem;
+    padding: clamp(2rem, 5vw, 3rem);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .clients-logo-group-heading {
+      grid-template-columns: minmax(0, 0.72fr) minmax(12rem, 0.28fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .clients-engagement-card {
+      transition: none;
+    }
+
+    .clients-engagement-card:hover {
+      transform: none;
+    }
+  }
+</style>
