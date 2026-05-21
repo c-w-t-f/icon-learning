@@ -8,15 +8,17 @@
 
 ## Status Snapshot
 
-- **Phase:** PR 17 Accessibility Statement implemented; ready for review.
+- **Phase:** CI/CD and Launch Prep
 - **Last touched:** 2026-05-21.
-- **Next action:** Review PR 17, then start PR 18 responsive QA, accessibility audit, performance audit, SEO audit, redirect plan, and content proofread per [DESIGN.md Section 11 Phase 5](DESIGN.md).
-- **Working tree:** Homepage remains complete through PR 8. PR 17 adds `/accessibility-statement`, replaces template accessibility content, adds global Organization/WebSite schema, and adds default OG/Twitter image metadata in `BaseLayout`.
+- **Next action:** Monitor GitHub Pages deployment, continue with remaining launch checks.
 
 ---
 
 ## What's Done
 
+- **2026-05-21** - CI/CD setup: Added GitHub Actions workflow (`deploy.yml`) using Node 22, and configured `base` path in `astro.config.mjs` for temporary GitHub Pages hosting.
+- **2026-05-21** - Programs update: Updated all 10 sample course JSON files to `hrdClaimable: true` and set the HRD Corp claimable toggle on `/programs` to be checked by default.
+- **2026-05-21** - Homepage updates: Added infinite scrolling marquee for "Our Clients" segment, adjusted wording to "Companies across Malaysia", and refined mask gradient.
 - **2026-05-21** - PR 17 Accessibility Statement added: `/accessibility-statement` renders WCAG 2.2 AA target copy, last-updated date, accessibility measures, known limitations, feedback contacts, Breadcrumb/WebPage JSON-LD, and global Organization/WebSite metadata/schema through `BaseLayout`.
 - **2026-05-21** - PR 16 Contact page added: `/contact` renders a split inquiry form and contact cards, mobile contact actions before the form, WhatsApp/email/phone/address/hours, `?training=` prefill behavior, email-draft submit behavior, buyer FAQs, and Breadcrumb/LocalBusiness/FAQPage JSON-LD.
 - **2026-05-21** - PR 15 Clients page added: `/clients` renders the verified public client logo set via `LogoWall`, broad sector groupings, engagement types, CTA, and Breadcrumb/LocalBusiness JSON-LD while avoiding client counts, testimonials, and outcome claims.
