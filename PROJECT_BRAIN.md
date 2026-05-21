@@ -8,9 +8,10 @@
 
 ## Status Snapshot
 
-- **Phase:** CI/CD and Launch Prep
+- **Phase:** PR 17 Accessibility Statement implemented; ready for review.
 - **Last touched:** 2026-05-21.
-- **Next action:** Monitor GitHub Pages deployment, continue with remaining launch checks.
+- **Next action:** Review PR 17, then start PR 18 responsive QA, accessibility audit, performance audit, SEO audit, redirect plan, and content proofread per [DESIGN.md Section 11 Phase 5](DESIGN.md).
+- **Working tree:** Homepage remains complete through PR 8. PR 17 adds `/accessibility-statement`, replaces template accessibility content, adds global Organization/WebSite schema, and adds default OG/Twitter image metadata in `BaseLayout`.
 
 ---
 
