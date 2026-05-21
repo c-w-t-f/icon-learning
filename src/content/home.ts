@@ -120,10 +120,10 @@ export const coursesShowcase = {
         "Leadership programs focus on the everyday work of guiding people, setting priorities, and improving team performance. They can support new supervisors, experienced managers, and teams going through change.",
       topics: ["Leadership", "Coaching", "Performance", "Change"],
       courses: [
-        "Leadership Boot Camp",
-        "Leadership + People Management",
-        "Supervisory Development Program",
-        "Performance Management via KRA and KPI",
+        {
+          label: "Leadership Boot Camp: Leading With Impact",
+          href: "/programs/leadership-management-coaching/leadership-boot-camp-leading-with-impact",
+        },
       ],
     },
     {
@@ -134,10 +134,14 @@ export const coursesShowcase = {
         "This category covers quality systems, ISO awareness, internal auditing, food safety, lean tools, and structured problem solving. It is built for teams responsible for standards, consistency, and operational discipline.",
       topics: ["ISO 9001", "HACCP", "GMP", "Lean"],
       courses: [
-        "ISO 9001 QMS Awareness",
-        "HACCP Internal Quality Audit",
-        "MS 1514-2022 GMP",
-        "Root Cause Analysis",
+        {
+          label: "Awareness in the New QMS ISO 9001",
+          href: "/programs/quality-lean-food-safety/awareness-in-the-new-qms-iso-9001",
+        },
+        {
+          label: "Kursus Pengendalian Makanan",
+          href: "/programs/quality-lean-food-safety/kursus-pengendalian-makanan",
+        },
       ],
     },
     {
@@ -148,10 +152,10 @@ export const coursesShowcase = {
         "Safety, health, and environment courses help operational teams identify risks, respond clearly, and meet workplace safety responsibilities. Programs range from committee training to hands-on emergency and equipment safety topics.",
       topics: ["OSH", "HIRARC", "First Aid", "Fire Safety"],
       courses: [
-        "Occupational Safety & Health at Workplace",
-        "Hazard Identification Risk Assessment & Risk Control",
-        "First Aid CPR at Work",
-        "Fire Safety Training for Fire Squad",
+        {
+          label: "Occupational Safety and Health at the Workplace",
+          href: "/programs/safety-health-environment/occupational-safety-and-health-at-work-place",
+        },
       ],
     },
     {
@@ -162,10 +166,10 @@ export const coursesShowcase = {
         "HR and employment law training gives teams a clearer way to manage people issues without drifting into avoidable compliance risk. It is useful for HR teams, department heads, and non-HR managers.",
       topics: ["Employment Act", "Payroll", "PDPA", "Discipline"],
       courses: [
-        "HR for Non-HR Managers",
-        "Understanding the Labour Law",
-        "How to Conduct a Domestic Inquiry",
-        "Anti-Bribery & Anti-Corruption",
+        {
+          label: "Understanding the Labour Law",
+          href: "/programs/hr-employment-law/understanding-the-labour-law",
+        },
       ],
     },
     {
@@ -176,10 +180,10 @@ export const coursesShowcase = {
         "Digital skills programs are designed for practical workplace use, from spreadsheet confidence to dashboard reporting and safer online habits. The category also includes AI and prompt-engineering topics for modern teams.",
       topics: ["Excel", "Power BI", "AI", "Cybersecurity"],
       courses: [
-        "Microsoft Excel Advanced Conditional Formatting",
-        "Power BI Desktop",
-        "Work Smarter, Prompt Better",
-        "Human Firewall Initiative",
+        {
+          label: "Work Smarter, Prompt Better",
+          href: "/programs/microsoft-ai-digital-skills/work-smarter-prompt-better",
+        },
       ],
     },
     {
@@ -190,10 +194,10 @@ export const coursesShowcase = {
         "Commercial and service programs help customer-facing teams communicate value, handle objections, and improve the customer experience. Topics span sales skills, retail, social media, and complaint handling.",
       topics: ["Sales", "Customer Care", "Digital Marketing", "Negotiation"],
       courses: [
-        "High Impact Selling Skills",
-        "Digital Marketing Zero to Hero",
-        "Customer Care Workshop",
-        "Complaints Management",
+        {
+          label: "Customer Care Workshop",
+          href: "/programs/sales-marketing-customer-service/customer-care-workshop",
+        },
       ],
     },
   ],
