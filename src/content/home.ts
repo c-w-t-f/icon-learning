@@ -53,24 +53,8 @@ export const proofBento = {
     "A first look at Icon Learning's enterprise proof points, ready to expand with workshop photography and approved testimonials.",
   items: [
     {
-      type: "proof",
-      column: 1,
-      speed: -18,
-      eyebrow: "Established",
-      heading: "Since 2011",
-      body: "Icon Learning has supported Malaysian teams with corporate training, strategic consulting, and ISO management system consultancy.",
-    },
-    {
-      type: "logoCloud",
-      column: 1,
-      speed: 12,
-      eyebrow: "Clients",
-      heading: "Trusted across industries",
-      logos: clientLogos.slice(0, 4),
-    },
-    {
       type: "feature",
-      column: 2,
+      column: 1,
       speed: 22,
       eyebrow: "HRD Corp",
       heading: "Claimable training, without the paperwork tone",
@@ -82,14 +66,6 @@ export const proofBento = {
       speed: -10,
       quote: "Transforming people. Powering performance. Delivering results.",
       attribution: "Icon Learning brand line",
-    },
-    {
-      type: "logoCloud",
-      column: 3,
-      speed: -16,
-      eyebrow: "More teams",
-      heading: "Recognizable Malaysian brands",
-      logos: clientLogos.slice(4),
     },
     {
       type: "feature",
@@ -287,7 +263,7 @@ export const serviceSolutions = {
       title: "Corporate Training Programs",
       description:
         "Practical programs across leadership, HR, quality, safety, digital skills, sales, service, and communication for Malaysian teams.",
-      points: ["Public runs", "In-house workshops", "HRD Corp claimable where confirmed", "Team skill gaps"],
+      points: ["Public runs", "In-house workshops", "HRD Corp claimable", "Team skill gaps"],
       href: "/programs",
     },
     {

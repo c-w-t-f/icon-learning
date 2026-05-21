@@ -1,5 +1,6 @@
 ---
 import SectionHeading from "../primitives/SectionHeading.astro";
+import hrdLogo from "../../../assets/source/logos/hrd/hrdf-training-and-claimable-icon-horizontal.png";
 
 interface ServiceItem {
   eyebrow: string;
@@ -32,6 +33,10 @@ const [primary, ...secondary] = items;
               <p class="eyebrow">{primary.eyebrow}</p>
               <h3 class="display-md mt-4 text-balance">{primary.title}</h3>
               <p class="body-copy mt-4 max-w-2xl text-[var(--color-ink-muted)]">{primary.description}</p>
+            </div>
+
+            <div class="flex-1 flex items-center justify-center w-full min-h-[12rem] py-6">
+              <img src={hrdLogo.src} alt="HRD Corp Claimable" class="w-full max-w-md h-auto object-contain opacity-90 mix-blend-multiply" loading="lazy" />
             </div>
 
             <ul class="service-pills" aria-label={`${primary.title} focus areas`}>
