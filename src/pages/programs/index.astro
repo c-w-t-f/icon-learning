@@ -1,0 +1,403 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Button from "../../components/primitives/Button.astro";
+import ProgramCard from "../../components/programs/ProgramCard.astro";
+import { courses, coursesByCategory } from "../../content/courses";
+import { durationFilters, languageFilters, programCategories } from "../../content/programs";
+import { site } from "../../content/site";
+
+const title = "Training Programs | Icon Learning";
+const description =
+  "Browse Icon Learning training programs by category, duration, language, and HRD Corp claimable status.";
+const totalCourses = courses.length;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="programs-hero">
+    <div class="container-wide">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,0.68fr)_minmax(18rem,0.32fr)] lg:items-end">
+        <div>
+          <p class="eyebrow" data-reveal>Programs catalog</p>
+          <h1 class="display-xl mt-4 max-w-4xl text-balance" data-reveal>Find the right training for your team</h1>
+          <p class="body-lg mt-5 max-w-2xl text-[var(--color-ink-muted)]" data-reveal>
+            Compare practical programmes across leadership, quality, safety, HR, digital skills, service, finance, supply chain, and communication.
+          </p>
+        </div>
+        <div class="programs-hero-panel" data-reveal>
+          <span class="programs-hero-number">{totalCourses}</span>
+          <span class="body-sm text-[var(--color-ink-muted)]">course summaries available for team training conversations</span>
+          <Button class="mt-5 w-full" href={site.whatsappHref} variant="filled-ink">Request training</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad pt-0" data-programs-catalog>
+    <div class="container-wide">
+      <div class="programs-toolbar" data-reveal>
+        <div class="programs-search">
+          <label class="body-sm font-semibold text-[var(--color-ink)]" for="program-search">Search programs</label>
+          <input
+            id="program-search"
+            class="programs-search-input"
+            type="search"
+            name="q"
+            placeholder="Search by title, audience, outcome, or topic"
+            autocomplete="off"
+            data-program-search
+          />
+        </div>
+
+        <div class="programs-toggle" aria-label="View mode">
+          <button class="programs-chip is-active" type="button" value="grouped" aria-pressed="true" data-view-mode>Grouped</button>
+          <button class="programs-chip" type="button" value="flat" aria-pressed="false" data-view-mode>Flat list</button>
+        </div>
+      </div>
+
+      <div class="programs-filter-panel mt-5" data-reveal>
+        <div class="programs-filter-block">
+          <span class="programs-filter-label">Category</span>
+          <div class="programs-chip-row">
+            <button class="programs-chip is-active" type="button" value="all" aria-pressed="true" data-category-filter>All</button>
+            {
+              programCategories.map((category) => (
+                <button class="programs-chip" type="button" value={category.slug} aria-pressed="false" data-category-filter>
+                  {category.shortTitle}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="programs-filter-block">
+          <span class="programs-filter-label">Duration</span>
+          <div class="programs-chip-row">
+            {
+              durationFilters.map((duration, index) => (
+                <button
+                  class:list={["programs-chip", index === 0 && "is-active"]}
+                  type="button"
+                  value={duration.value}
+                  aria-pressed={index === 0 ? "true" : "false"}
+                  data-duration-filter
+                >
+                  {duration.label}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="programs-filter-block">
+          <span class="programs-filter-label">Language</span>
+          <div class="programs-chip-row">
+            {
+              languageFilters.map((language, index) => (
+                <button
+                  class:list={["programs-chip", index === 0 && "is-active"]}
+                  type="button"
+                  value={language.value}
+                  aria-pressed={index === 0 ? "true" : "false"}
+                  data-language-filter
+                >
+                  {language.label}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <label class="programs-switch">
+          <input type="checkbox" data-hrd-filter />
+          <span class="programs-switch-track" aria-hidden="true"><span></span></span>
+          <span>HRD Corp claimable</span>
+        </label>
+      </div>
+
+      <div class="programs-results-bar" data-reveal>
+        <p class="body-sm font-semibold text-[var(--color-ink)]" data-results-count>{totalCourses} courses</p>
+        <p class="body-sm text-[var(--color-ink-muted)]">Need the full outline? Send us the course title and preferred delivery format.</p>
+      </div>
+
+      <div class="programs-empty" data-empty-state hidden>
+        <h2 class="text-xl font-semibold">No matching programs</h2>
+        <p class="body-sm mt-2 text-[var(--color-ink-muted)]">Try a broader search or clear one of the filters.</p>
+      </div>
+
+      <div class="programs-grouped" data-grouped-view>
+        {
+          programCategories.map((category) => {
+            const categoryCourses = coursesByCategory[category.slug] ?? [];
+
+            return (
+              <section class="programs-category-group" data-category-group data-category-slug={category.slug}>
+                <div class="programs-category-heading">
+                  <div>
+                    <p class="eyebrow">Category</p>
+                    <h2 class="display-md mt-3">{category.title}</h2>
+                    <p class="body-copy mt-3 max-w-2xl text-[var(--color-ink-muted)]">{category.summary}</p>
+                  </div>
+                  <a class="programs-category-link" href={`/programs/${category.slug}`}>Category page -&gt;</a>
+                </div>
+
+                <div class="programs-grid">
+                  {
+                    categoryCourses.map((course) => (
+                      <ProgramCard course={course} categoryTitle={category.title} />
+                    ))
+                  }
+                </div>
+              </section>
+            );
+          })
+        }
+      </div>
+
+      <div class="programs-flat" data-flat-view hidden>
+        <div class="programs-grid">
+          {
+            courses.map((course) => (
+              <ProgramCard course={course} categoryTitle={programCategories.find((category) => category.slug === course.categorySlug)?.title ?? course.categorySlug} />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import "../../components/programs/ProgramsCatalog.client";
+  </script>
+</BaseLayout>
+
+<style>
+  .programs-hero {
+    padding-block: calc(var(--nav-height) + 4.5rem) clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .programs-hero-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+  }
+
+  .programs-hero-number {
+    display: block;
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 0.95;
+  }
+
+  .programs-toolbar,
+  .programs-filter-panel,
+  .programs-results-bar,
+  .programs-empty {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .programs-toolbar {
+    align-items: end;
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .programs-search {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .programs-search-input {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-ink);
+    min-height: 3rem;
+    padding: 0.8rem 0.95rem;
+    width: 100%;
+  }
+
+  .programs-search-input::placeholder {
+    color: var(--color-ink-dim);
+  }
+
+  .programs-filter-panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .programs-filter-block {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .programs-filter-label {
+    color: var(--color-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .programs-chip-row,
+  .programs-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .programs-chip {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-height: 2.35rem;
+    padding: 0.45rem 0.8rem;
+    transition:
+      background 160ms var(--ease-standard),
+      border-color 160ms var(--ease-standard),
+      color 160ms var(--ease-standard);
+  }
+
+  .programs-chip:hover,
+  .programs-chip.is-active,
+  .programs-chip[aria-pressed="true"] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-ink-inverse);
+  }
+
+  .programs-switch {
+    align-items: center;
+    color: var(--color-ink);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 0.9rem;
+    font-weight: 700;
+    gap: 0.65rem;
+    width: fit-content;
+  }
+
+  .programs-switch input {
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  .programs-switch-track {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    display: inline-flex;
+    height: 1.55rem;
+    padding: 0.16rem;
+    width: 2.75rem;
+  }
+
+  .programs-switch-track span {
+    background: var(--color-ink-muted);
+    border-radius: 999px;
+    height: 100%;
+    transition:
+      background 160ms var(--ease-standard),
+      transform 160ms var(--ease-standard);
+    width: 1.1rem;
+  }
+
+  .programs-switch input:checked + .programs-switch-track {
+    background: var(--color-success-soft);
+  }
+
+  .programs-switch input:checked + .programs-switch-track span {
+    background: var(--color-ink);
+    transform: translateX(1.15rem);
+  }
+
+  .programs-switch input:focus-visible + .programs-switch-track {
+    outline: 3px solid color-mix(in srgb, var(--color-accent), transparent 35%);
+    outline-offset: 3px;
+  }
+
+  .programs-results-bar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .programs-empty {
+    margin-top: 1rem;
+    padding: 1.25rem;
+  }
+
+  .programs-grouped,
+  .programs-flat {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .programs-category-group + .programs-category-group {
+    border-top: 1px solid var(--color-border);
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .programs-category-heading {
+    align-items: start;
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .programs-category-link {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .programs-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (min-width: 768px) {
+    .programs-toolbar {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 1.25rem;
+    }
+
+    .programs-filter-panel {
+      grid-template-columns: 1fr;
+      padding: 1.25rem;
+    }
+
+    .programs-category-heading {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .programs-chip,
+    .programs-switch-track span {
+      transition: none;
+    }
+  }
+</style>

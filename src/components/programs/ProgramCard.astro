@@ -1,0 +1,112 @@
+---
+import { courseSearchText, courseUrl } from "../../content/courses";
+import { formatDuration, formatLanguage } from "../../content/programs";
+import type { Course } from "../../content/courses/schema";
+
+interface Props {
+  course: Course;
+  categoryTitle: string;
+}
+
+const { course, categoryTitle } = Astro.props;
+const href = courseUrl(course);
+const summary = course.whyThisMatters.replace(/\s+/g, " ");
+---
+
+<a
+  class="program-card"
+  href={href}
+  data-program-card
+  data-course-id={course.slug}
+  data-category={course.categorySlug}
+  data-duration={String(course.durationDays)}
+  data-language={course.language}
+  data-hrd={String(course.hrdClaimable)}
+  data-search={courseSearchText(course)}
+>
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="program-card-chip">{categoryTitle}</span>
+    <span class="program-card-chip">{formatDuration(course.durationDays)}</span>
+    <span class="program-card-chip">{formatLanguage(course.language)}</span>
+    {course.hrdClaimable && <span class="program-card-chip program-card-chip-claimable">HRD Corp claimable</span>}
+  </div>
+
+  <div class="mt-5">
+    <h3 class="text-xl font-semibold leading-tight text-[var(--color-ink)]">{course.title}</h3>
+    {course.subtitle && <p class="body-sm mt-2 text-[var(--color-ink-muted)]">{course.subtitle}</p>}
+  </div>
+
+  <p class="body-sm mt-5 line-clamp-3 text-[var(--color-ink-muted)]">{summary}</p>
+
+  <div class="mt-5 flex flex-wrap gap-2">
+    {course.builtFor.slice(0, 2).map((audience) => <span class="program-card-tag">{audience}</span>)}
+  </div>
+
+  <div class="mt-6 flex items-center justify-between gap-4 border-t border-[var(--color-border)] pt-4">
+    <span class="text-sm font-semibold text-[var(--color-ink)]">View summary</span>
+    <span class="program-card-arrow" aria-hidden="true">-&gt;</span>
+  </div>
+</a>
+
+<style>
+  .program-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: clamp(1.1rem, 2vw, 1.35rem);
+    transition:
+      border-color 180ms var(--ease-standard),
+      box-shadow 180ms var(--ease-standard),
+      transform 180ms var(--ease-standard);
+  }
+
+  .program-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .program-card-chip,
+  .program-card-tag {
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-ink-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0.35rem 0.55rem;
+  }
+
+  .program-card-chip {
+    background: var(--color-bg);
+  }
+
+  .program-card-chip-claimable {
+    background: var(--color-success-soft);
+    border-color: color-mix(in srgb, var(--color-success-soft), var(--color-ink) 16%);
+    color: var(--color-ink);
+  }
+
+  .program-card-tag {
+    background: var(--color-surface-muted);
+  }
+
+  .program-card-arrow {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .program-card {
+      transition: none;
+    }
+
+    .program-card:hover {
+      transform: none;
+    }
+  }
+</style>
