@@ -3,8 +3,8 @@ import { site } from "./site";
 export const navigationItems = [
   { label: "Programs", href: "/#categories" },
   { label: "Solutions", href: "/#services" },
+  { label: "Clients", href: "/#home-clients" },
   { label: "About", href: "/about-us" },
-  { label: "Clients", href: "/clients" },
   { label: "Contact", href: "/contact" },
 ];
 

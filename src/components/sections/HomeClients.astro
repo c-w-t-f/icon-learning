@@ -1,0 +1,125 @@
+---
+import { clientGroups } from "../../content/clients";
+import Button from "../primitives/Button.astro";
+
+// Flatten all logos from the groups into a single array for the marquee
+const allLogos = clientGroups.flatMap((group) => group.logos);
+---
+
+<section id="home-clients" class="section-pad bg-[var(--color-bg)] overflow-hidden">
+  <div class="container-wide flex flex-col items-center gap-10">
+    <div class="text-center" data-reveal>
+      <p class="eyebrow justify-center">Trusted By</p>
+      <h2 class="display-md mt-4 text-balance">Companies across Malaysia</h2>
+    </div>
+
+    <div class="marquee-container mt-4" data-reveal>
+      <div class="marquee-track">
+        {/* Render the first set of logos */}
+        {allLogos.map((logo) => (
+          <div class="marquee-item">
+            <img src={logo.src} alt={logo.name} title={logo.name} loading="lazy" />
+          </div>
+        ))}
+        {/* Render a duplicate set for seamless infinite scrolling */}
+        {allLogos.map((logo) => (
+          <div class="marquee-item" aria-hidden="true">
+            <img src={logo.src} alt={logo.name} title={logo.name} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="mt-6" data-reveal>
+      <Button href="/clients" variant="outline">View all clients -&gt;</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marquee-container {
+    --marquee-gap: 3rem;
+    --marquee-duration: 60s;
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    width: 100vw; /* Take full viewport width */
+    position: relative;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 2rem,
+      calc(100% - 2rem),
+      transparent
+    );
+  }
+
+  .marquee-track {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--marquee-gap);
+    min-width: 100%;
+    animation: marquee var(--marquee-duration) linear infinite;
+    padding-inline: var(--marquee-gap);
+  }
+
+  .marquee-container:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: clamp(6rem, 12vw, 9rem);
+    height: 4rem;
+    flex-shrink: 0;
+  }
+
+  .marquee-item img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: filter 200ms ease, opacity 200ms ease, transform 200ms ease;
+  }
+
+  .marquee-item:hover img {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-50% - (var(--marquee-gap) / 2)));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation-play-state: paused !important;
+      /* If motion is reduced, just let it scroll natively */
+      transform: none !important;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding-block: 1rem;
+    }
+    
+    .marquee-container {
+      overflow-x: auto;
+      mask-image: none;
+    }
+    
+    /* Hide duplicates if not animating */
+    .marquee-item[aria-hidden="true"] {
+      display: none;
+    }
+  }
+</style>

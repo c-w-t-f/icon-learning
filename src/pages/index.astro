@@ -8,6 +8,7 @@ import Hero from "../components/sections/Hero.astro";
 import ResultsGrid from "../components/sections/ResultsGrid.astro";
 import ServicesBento from "../components/sections/ServicesBento.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
+import HomeClients from "../components/sections/HomeClients.astro";
 import { coursesShowcase, ctaCloser, homeHero, outcomesProof, proofBento, serviceSolutions, trainingApproach } from "../content/home";
 import { approvedTestimonials, testimonialShowcase } from "../content/testimonials";
 ---
@@ -20,5 +21,6 @@ import { approvedTestimonials, testimonialShowcase } from "../content/testimonia
   <ApproachSection {...trainingApproach} />
   <ResultsGrid {...outcomesProof} />
   {approvedTestimonials.length > 0 && <Testimonials {...testimonialShowcase} items={approvedTestimonials} />}
+  <HomeClients />
   <CtaCloser {...ctaCloser} />
 </BaseLayout>
