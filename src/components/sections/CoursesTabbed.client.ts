@@ -1,9 +1,43 @@
 const section = document.querySelector<HTMLElement>("[data-courses-tabbed]");
+const labelList = section?.querySelector<HTMLElement>(".course-label-list");
 const labels = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-course-label]"));
 const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-course-panel]"));
 const desktopTabs = window.matchMedia("(min-width: 1024px)");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const panelTransitionMs = 540;
 
-const setActive = (id: string) => {
+const hideTimers = new WeakMap<HTMLElement, number>();
+
+const clearHideTimer = (panel: HTMLElement) => {
+  const timer = hideTimers.get(panel);
+
+  if (timer) {
+    window.clearTimeout(timer);
+    hideTimers.delete(panel);
+  }
+};
+
+const updateActiveIndicator = () => {
+  if (!labelList || !desktopTabs.matches) return;
+
+  const activeLabel = labels.find((label) => label.classList.contains("is-active"));
+
+  if (!activeLabel) return;
+
+  labelList.style.setProperty("--active-y", `${activeLabel.offsetTop}px`);
+  labelList.style.setProperty("--active-height", `${activeLabel.offsetHeight}px`);
+};
+
+const setActive = (id: string, immediate = false) => {
+  const nextPanel = panels.find((panel) => panel.id === id);
+  const currentPanel = panels.find((panel) => panel.classList.contains("is-active"));
+
+  if (!nextPanel || currentPanel === nextPanel) return;
+
+  const nextIndex = panels.indexOf(nextPanel);
+
+  labelList?.style.setProperty("--active-index", String(Math.max(0, nextIndex)));
+
   labels.forEach((label) => {
     const active = label.dataset.target === id;
     label.classList.toggle("is-active", active);
@@ -11,8 +45,47 @@ const setActive = (id: string) => {
     label.setAttribute("aria-selected", active ? "true" : "false");
   });
 
-  panels.forEach((panel) => {
-    panel.toggleAttribute("hidden", panel.id !== id);
+  panels.forEach(clearHideTimer);
+
+  if (immediate || !currentPanel || !desktopTabs.matches || reducedMotion.matches) {
+    panels.forEach((panel) => {
+      const active = panel === nextPanel;
+
+      panel.toggleAttribute("hidden", !active);
+      panel.classList.toggle("is-active", active);
+      panel.classList.remove("is-exiting");
+      panel.setAttribute("aria-hidden", active ? "false" : "true");
+      panel.toggleAttribute("inert", !active);
+    });
+
+    window.requestAnimationFrame(updateActiveIndicator);
+    window.setTimeout(updateActiveIndicator, 280);
+    return;
+  }
+
+  currentPanel.classList.remove("is-active");
+  currentPanel.classList.add("is-exiting");
+  currentPanel.setAttribute("aria-hidden", "true");
+  currentPanel.setAttribute("inert", "");
+
+  hideTimers.set(
+    currentPanel,
+    window.setTimeout(() => {
+      currentPanel.hidden = true;
+      currentPanel.classList.remove("is-exiting");
+      hideTimers.delete(currentPanel);
+    }, panelTransitionMs),
+  );
+
+  nextPanel.hidden = false;
+  nextPanel.classList.remove("is-exiting");
+  nextPanel.setAttribute("aria-hidden", "false");
+  nextPanel.removeAttribute("inert");
+
+  window.requestAnimationFrame(() => {
+    nextPanel.classList.add("is-active");
+    updateActiveIndicator();
+    window.setTimeout(updateActiveIndicator, 280);
   });
 };
 
@@ -60,7 +133,7 @@ const onScroll = () => {
 
 if (section && labels.length > 0 && panels.length > 0) {
   section.dataset.enhanced = "true";
-  setActive(panels[0].id);
+  setActive(panels[0].id, true);
 
   labels.forEach((label) => {
     label.addEventListener("click", () => {
@@ -92,10 +165,15 @@ if (section && labels.length > 0 && panels.length > 0) {
   });
 
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
+  window.addEventListener("resize", () => {
+    onScroll();
+    updateActiveIndicator();
+  }, { passive: true });
+  desktopTabs.addEventListener("change", updateActiveIndicator);
   
   // Initial check in case it loaded scrolled down
   onScroll();
+  updateActiveIndicator();
 }
 
 export {};

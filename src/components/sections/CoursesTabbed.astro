@@ -64,7 +64,7 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
         </div>
       </div>
 
-      <div class="flex flex-col gap-8 lg:gap-0">
+      <div class="course-panel-stage flex flex-col gap-8 lg:gap-0">
         {
           categories.map((category) => (
             <article
@@ -76,18 +76,18 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
               aria-labelledby={`tab-${category.slug}`}
             >
               <div>
-                <p class="eyebrow">Category preview</p>
-                <h3 class="display-md mt-4">{category.title}</h3>
-                <div class="category-topic-grid mt-5" aria-label={`${category.title} focus areas`}>
+                <p class="eyebrow course-panel-item" style="--panel-item-delay: 0ms">Category preview</p>
+                <h3 class="display-md course-panel-item mt-4" style="--panel-item-delay: 45ms">{category.title}</h3>
+                <div class="category-topic-grid course-panel-item mt-5" style="--panel-item-delay: 90ms" aria-label={`${category.title} focus areas`}>
                   {category.topics.map((topic) => (
                     <span>{topic}</span>
                   ))}
                 </div>
-                <p class="body-copy mt-4 max-w-2xl text-[var(--color-ink-muted)]">{category.summary}</p>
-                <p class="body-copy mt-4 max-w-2xl text-[var(--color-ink-muted)]">{category.intro}</p>
+                <p class="body-copy course-panel-item mt-4 max-w-2xl text-[var(--color-ink-muted)]" style="--panel-item-delay: 135ms">{category.summary}</p>
+                <p class="body-copy course-panel-item mt-4 max-w-2xl text-[var(--color-ink-muted)]" style="--panel-item-delay: 180ms">{category.intro}</p>
               </div>
 
-              <div class="mt-6 lg:mt-4 grid gap-3 sm:grid-cols-2">
+              <div class="course-panel-item mt-6 grid gap-3 sm:grid-cols-2 lg:mt-4" style="--panel-item-delay: 225ms">
                 {category.courses.map((course) => (
                   <a class="course-card" href={previewHref(category, course)}>
                     <span>{courseLabel(course)}</span>
@@ -96,7 +96,7 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
                 ))}
               </div>
 
-              <div class="mt-7 lg:mt-5">
+              <div class="course-panel-item mt-7 lg:mt-5" style="--panel-item-delay: 270ms">
                 <Button href={`/programs/${category.slug}`} variant="ghost">
                   Explore {category.title} -&gt;
                 </Button>
@@ -142,6 +142,11 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
     padding: 1rem;
     scroll-snap-align: start;
     text-align: left;
+    transition:
+      background-color 260ms var(--ease-standard),
+      border-color 260ms var(--ease-standard),
+      color 260ms var(--ease-standard),
+      transform 260ms var(--ease-standard);
   }
 
   .course-label-rule {
@@ -204,6 +209,21 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
     display: none;
   }
 
+  [data-courses-tabbed][data-enhanced] .category-block {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  [data-courses-tabbed][data-enhanced] .category-block.is-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-courses-tabbed][data-enhanced] .category-block.is-exiting {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
   @keyframes fadeSlideIn {
     from {
       opacity: 0;
@@ -215,8 +235,24 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
     }
   }
 
-  [data-courses-tabbed][data-enhanced] [data-course-panel]:not([hidden]) {
-    animation: fadeSlideIn 350ms var(--ease-standard) forwards;
+  [data-courses-tabbed][data-enhanced] .course-panel-item {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 420ms var(--ease-enter),
+      transform 420ms var(--ease-enter);
+    transition-delay: var(--panel-item-delay, 0ms);
+  }
+
+  [data-courses-tabbed][data-enhanced] .category-block.is-active .course-panel-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-courses-tabbed][data-enhanced] .category-block.is-exiting .course-panel-item {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition-delay: 0ms;
   }
 
   .category-topic-grid {
@@ -283,6 +319,23 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
       margin-inline: 0;
       overflow: visible;
       padding: 0;
+      position: relative;
+    }
+
+    [data-courses-tabbed][data-enhanced] .course-label-list::before {
+      background: var(--color-accent);
+      border-radius: 999px;
+      content: "";
+      height: var(--active-height, 3rem);
+      left: 0;
+      position: absolute;
+      top: 0;
+      transform: translateY(var(--active-y, 0px));
+      transition:
+        height 420ms var(--ease-enter),
+        transform 420ms var(--ease-enter);
+      width: 0.25rem;
+      z-index: 0;
     }
 
     .course-label {
@@ -291,11 +344,19 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
       border-radius: 0;
       min-width: 0;
       padding: 0.85rem 0 0.85rem 0.25rem;
+      position: relative;
       width: 100%;
+      z-index: 1;
     }
 
     .course-label.is-active {
       border-color: transparent;
+      transform: translateX(0.35rem);
+    }
+
+    .course-label.is-active .course-label-rule,
+    .course-label-rule {
+      opacity: 0;
     }
 
     .category-block {
@@ -304,18 +365,50 @@ const previewHref = (category: Category, course: Category["courses"][number]) =>
       box-shadow: none;
       padding: 0;
     }
+
+    [data-courses-tabbed][data-enhanced] .course-panel-stage {
+      min-height: clamp(28rem, 56vh, 34rem);
+      position: relative;
+    }
+
+    [data-courses-tabbed][data-enhanced] .category-block {
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      transition:
+        opacity 460ms var(--ease-enter),
+        transform 460ms var(--ease-enter);
+      width: 100%;
+      will-change: opacity, transform;
+    }
+
+    [data-courses-tabbed][data-enhanced] .category-block.is-active {
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    [data-courses-tabbed][data-enhanced] .category-block.is-exiting {
+      z-index: 1;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
+    [data-courses-tabbed][data-enhanced] .category-block,
+    [data-courses-tabbed][data-enhanced] .course-panel-item,
     [data-courses-tabbed][data-enhanced] .course-label-summary,
     .course-label-rule,
     .course-label-title,
-    .course-card {
+    .course-card,
+    .course-label {
       transition: none;
     }
 
-    [data-courses-tabbed][data-enhanced] [data-course-panel]:not([hidden]) {
-      animation: none;
+    [data-courses-tabbed][data-enhanced] .category-block,
+    [data-courses-tabbed][data-enhanced] .category-block.is-active,
+    [data-courses-tabbed][data-enhanced] .category-block.is-exiting,
+    [data-courses-tabbed][data-enhanced] .course-panel-item {
+      opacity: 1;
+      transform: none;
     }
 
     .course-card:hover {
