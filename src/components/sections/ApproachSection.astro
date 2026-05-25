@@ -29,24 +29,168 @@ const { eyebrow, heading, description, steps } = Astro.props;
 
 <section id="approach" class="section-pad bg-[var(--color-bg)]">
   <div class="container-wide">
-    <SectionHeading eyebrow={eyebrow} heading={heading} description={description} align="center" />
+    <div class="approach-flip" data-approach-flip style={`--approach-count: ${steps.length}`}>
+      <div class="approach-flip-track" data-approach-track>
+        <div class="approach-flip-pin" data-approach-pin>
+          <SectionHeading eyebrow={eyebrow} heading={heading} description={description} align="center" />
 
-    <div class="approach-stripes mt-10 lg:mt-14">
-      {
-        steps.map((step, index) => (
-          <FeatureStripe
-            {...step}
-            reverse={index % 2 === 1}
-            number={String(index + 1).padStart(2, "0")}
-          />
-        ))
-      }
+          <div class="approach-pages mt-10 lg:mt-8">
+            {
+              steps.map((step, index) => (
+                <div
+                  class="approach-page"
+                  data-approach-page
+                  style={`--approach-page-index: ${index}; --approach-page-z: ${steps.length - index}`}
+                >
+                  <FeatureStripe
+                    {...step}
+                    reverse={index % 2 === 1}
+                    number={String(index + 1).padStart(2, "0")}
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
+<script>
+  import "./ApproachSection.client";
+</script>
+
 <style>
-  .approach-stripes > :global(article + article) {
-    border-top: 1px solid var(--color-border);
+  .approach-flip {
+    --approach-page-height: clamp(34rem, calc(100vh - var(--nav-height) - 13rem), 40rem);
+    position: relative;
+  }
+
+  .approach-flip-track {
+    height: auto;
+  }
+
+  .approach-flip-pin {
+    min-height: 0;
+  }
+
+  .approach-pages {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .approach-page {
+    --approach-opacity: 1;
+    --approach-rotate: 7deg;
+    --approach-scale: 0.96;
+    --approach-y: 2rem;
+    --approach-z: calc(var(--approach-page-z) * 1px);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.82)),
+      var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 28px;
+    box-shadow: var(--shadow-md);
+    opacity: var(--approach-opacity);
+    overflow: hidden;
+    position: relative;
+    transform-origin: center top;
+    transform-style: preserve-3d;
+    transition:
+      box-shadow 220ms var(--ease-standard),
+      opacity 120ms linear;
+    will-change: transform, opacity;
+  }
+
+  .approach-page::before {
+    background: linear-gradient(180deg, rgb(10 10 10 / 0.1), transparent 28%);
+    content: "";
+    inset: 0;
+    opacity: var(--approach-fold-shadow, 0);
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+  }
+
+  .approach-page :global(.feature-stripe) {
+    padding: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 1024px) {
+    .approach-flip[data-approach-ready="true"] .approach-flip-track {
+      height: calc(100vh + (var(--approach-page-height) * (var(--approach-count) - 1)));
+      min-height: calc(var(--approach-page-height) + 13rem);
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-flip-pin {
+      min-height: calc(100vh - var(--nav-height) - 2rem);
+      perspective: 1800px;
+      position: sticky;
+      top: calc(var(--nav-height) + 1rem);
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-pages {
+      display: block;
+      min-height: var(--approach-page-height);
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-page {
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      transform:
+        translate3d(0, var(--approach-y), var(--approach-z))
+        rotateX(var(--approach-rotate))
+        scale(var(--approach-scale));
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-page.is-active {
+      pointer-events: auto;
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-page :global(.feature-stripe) {
+      min-height: var(--approach-page-height);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .approach-flip[data-approach-ready="true"] .approach-flip-track,
+    .approach-flip-track {
+      height: auto;
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-flip-pin,
+    .approach-flip-pin {
+      min-height: 0;
+      perspective: none;
+      position: static;
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-pages,
+    .approach-pages {
+      display: grid;
+      gap: 1rem;
+      min-height: 0;
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-page,
+    .approach-page {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+      transform: none;
+    }
+
+    .approach-page::before {
+      opacity: 0;
+    }
+
+    .approach-flip[data-approach-ready="true"] .approach-page :global(.feature-stripe),
+    .approach-page :global(.feature-stripe) {
+      min-height: 0;
+    }
   }
 </style>
