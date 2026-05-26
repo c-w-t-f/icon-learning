@@ -123,6 +123,53 @@ a {
   width: 0.375rem;
 }
 
+.photo-hero {
+  background: var(--color-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-hero::before,
+.photo-hero::after {
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.photo-hero::before {
+  background-image: var(--photo-hero-image);
+  background-position: var(--photo-hero-position, center right);
+  background-size: cover;
+  opacity: var(--photo-hero-opacity, 0.74);
+  z-index: 0;
+}
+
+.photo-hero::after {
+  background:
+    linear-gradient(90deg, rgb(251 250 248 / 0.94) 0%, rgb(251 250 248 / 0.84) 42%, rgb(251 250 248 / 0.7) 100%),
+    linear-gradient(180deg, rgb(251 250 248 / 0.84) 0%, rgb(251 250 248 / 0.58) 48%, var(--color-bg) 100%);
+  z-index: 0;
+}
+
+.photo-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 48rem) {
+  .photo-hero::before {
+    background-position: var(--photo-hero-mobile-position, var(--photo-hero-position, 68% center));
+    opacity: var(--photo-hero-mobile-opacity, 0.5);
+  }
+
+  .photo-hero::after {
+    background:
+      linear-gradient(180deg, rgb(251 250 248 / 0.92) 0%, rgb(251 250 248 / 0.8) 52%, var(--color-bg) 100%),
+      linear-gradient(90deg, rgb(251 250 248 / 0.9), rgb(251 250 248 / 0.72));
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html[data-motion-ready] [data-hero-item] {
     opacity: 0;

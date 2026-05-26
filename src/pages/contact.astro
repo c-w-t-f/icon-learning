@@ -4,6 +4,7 @@ import ContactPanel from "../components/contact/ContactPanel.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { contactPage } from "../content/contact";
 import { site } from "../content/site";
+import contactHeroImage from "../../assets/web/photos/ai-contact-hero-01.jpg";
 
 const pageUrl = new URL("/contact", site.url).toString();
 const structuredData = [
@@ -80,7 +81,10 @@ const structuredData = [
 <BaseLayout title={contactPage.title} description={contactPage.description}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
-  <section class="contact-hero">
+  <section
+    class="contact-hero photo-hero"
+    style={`--photo-hero-image: url("${contactHeroImage.src}"); --photo-hero-position: center right; --photo-hero-mobile-position: 64% center;`}
+  >
     <div class="container-wide">
       <div class="contact-breadcrumb body-sm" data-reveal>
         <a href="/">Home</a>

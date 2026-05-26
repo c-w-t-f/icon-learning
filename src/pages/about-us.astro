@@ -1,5 +1,6 @@
 ---
 import brandLogo from "../../assets/source/brand/logo/icon-learning-black.png";
+import aboutHeroImage from "../../assets/web/photos/ai-about-hero-01.jpg";
 import Button from "../components/primitives/Button.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { aboutPage } from "../content/about";
@@ -70,7 +71,10 @@ const structuredData = [
 <BaseLayout title={aboutPage.title} description={aboutPage.description}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
-  <section class="about-hero">
+  <section
+    class="about-hero photo-hero"
+    style={`--photo-hero-image: url("${aboutHeroImage.src}"); --photo-hero-position: center right; --photo-hero-mobile-position: 66% center;`}
+  >
     <div class="container-wide">
       <div class="about-breadcrumb body-sm" data-reveal>
         <a href="/">Home</a>

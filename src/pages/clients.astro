@@ -4,6 +4,7 @@ import LogoWall from "../components/primitives/LogoWall.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { clientGroups, clientsPage } from "../content/clients";
 import { site } from "../content/site";
+import clientsHeroImage from "../../assets/web/photos/ai-clients-hero-01.jpg";
 
 const pageUrl = new URL("/clients", site.url).toString();
 const structuredData = [
@@ -69,7 +70,10 @@ const structuredData = [
 <BaseLayout title={clientsPage.title} description={clientsPage.description}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
-  <section class="clients-hero">
+  <section
+    class="clients-hero photo-hero"
+    style={`--photo-hero-image: url("${clientsHeroImage.src}"); --photo-hero-position: center right; --photo-hero-mobile-position: 62% center;`}
+  >
     <div class="container-wide">
       <div class="clients-breadcrumb body-sm" data-reveal>
         <a href="/">Home</a>

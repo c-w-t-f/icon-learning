@@ -10,10 +10,11 @@ import Testimonials from "../components/sections/Testimonials.astro";
 import HomeClients from "../components/sections/HomeClients.astro";
 import { coursesShowcase, ctaCloser, homeHero, proofBento, serviceSolutions, trainingApproach } from "../content/home";
 import { approvedTestimonials, testimonialShowcase } from "../content/testimonials";
+import workshopHeroImage from "../../assets/web/photos/ai-workshop-hero-03.jpg";
 ---
 
 <BaseLayout>
-  <Hero {...homeHero} />
+  <Hero {...homeHero} backgroundImage={workshopHeroImage.src} />
   <BentoMasonry {...proofBento} />
   <CoursesTabbed {...coursesShowcase} />
   <ServicesBento {...serviceSolutions} />

@@ -5,6 +5,7 @@ import ProgramCard from "../../components/programs/ProgramCard.astro";
 import { courses, coursesByCategory } from "../../content/courses";
 import { durationFilters, languageFilters, programCategories } from "../../content/programs";
 import { site } from "../../content/site";
+import programsHeroImage from "../../../assets/web/photos/ai-programs-hero-01.jpg";
 
 const title = "Corporate Training Programs Malaysia | Icon Learning";
 const description =
@@ -13,7 +14,10 @@ const totalCourses = courses.length;
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="programs-hero">
+  <section
+    class="programs-hero photo-hero"
+    style={`--photo-hero-image: url("${programsHeroImage.src}"); --photo-hero-position: center right; --photo-hero-mobile-position: 64% center;`}
+  >
     <div class="container-wide">
       <div class="grid gap-8 lg:grid-cols-[minmax(0,0.68fr)_minmax(18rem,0.32fr)] lg:items-end">
         <div>
